@@ -10,11 +10,12 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Tourist;
 use App\Models\Guide;
 use App\Models\Admin;
+use App\Http\Controllers\GuideRegistrationController;
 
 // Public routes
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 // Redirect after login based on user type
 Route::get('/dashboard', function () {
@@ -53,5 +54,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Guide Registration Routes (Public - No Authentication Required)
+Route::get('/become-a-guide', [GuideRegistrationController::class, 'create'])
+    ->name('guide-registration.create');
+    
+Route::post('/become-a-guide', [GuideRegistrationController::class, 'store'])
+    ->name('guide-registration.store');
+    
+Route::get('/guide-registration-success', [GuideRegistrationController::class, 'success'])
+    ->name('guide-registration.success');
 
 require __DIR__.'/auth.php';
