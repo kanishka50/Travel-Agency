@@ -27,7 +27,7 @@ Route::get('/dashboard', function () {
     } elseif ($user->isGuide()) {
         return redirect()->route('guide.dashboard');
     } elseif ($user->isAdmin()) {
-        return redirect()->route('admin.dashboard');
+        return redirect('/admin');
     }
     
     return redirect('/');
@@ -43,10 +43,6 @@ Route::middleware(['auth', 'guide'])->prefix('guide')->name('guide.')->group(fun
     Route::get('/dashboard', [GuideController::class, 'dashboard'])->name('dashboard');
 });
 
-// Admin routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-});
 
 // Profile routes (for all authenticated users)
 Route::middleware('auth')->group(function () {

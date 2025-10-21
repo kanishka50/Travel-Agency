@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Panel;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, FilamentUser, HasName
 {
     use Notifiable;
 
@@ -30,6 +33,13 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    // Filament: Only admins can access panel
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->user_type === 'admin' && $this->status === 'active';
     }
 
     // Relationships
@@ -67,5 +77,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isActive(): bool
     {
         return $this->status === 'active';
+    }
+
+    // For Filament (if you want users to login via User model)
+    public function canAccessFilament(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function getFilamentName(): string
+    {
+        // GUARANTEED to return a string - never null
+        return $this->email;
     }
 }
