@@ -32,9 +32,9 @@
     <div class="mt-6 bg-white p-6 rounded border">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div class="space-y-2">
-            <a href="#" class="block text-blue-600 hover:text-blue-800">Browse Tour Plans</a>
-            <a href="#" class="block text-blue-600 hover:text-blue-800">Post New Request</a>
-            <a href="#" class="block text-blue-600 hover:text-blue-800">View My Bookings</a>
+            <a href="{{ route('plans.index') }}" class="block text-blue-600 hover:text-blue-800">Browse Tour Plans</a>
+            <a href="{{ route('bookings.index') }}" class="block text-blue-600 hover:text-blue-800">View My Bookings</a>
+            <a href="#" class="block text-gray-400 cursor-not-allowed" title="Coming soon">Post New Request</a>
         </div>
     </div>
 </div>

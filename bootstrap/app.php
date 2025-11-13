@@ -11,12 +11,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Alias middleware
         $middleware->alias([
-        'tourist' => \App\Http\Middleware\EnsureTourist::class,
-        'guide' => \App\Http\Middleware\EnsureGuide::class,
-        'admin' => \App\Http\Middleware\EnsureAdmin::class,
-    ]);
+            'tourist' => \App\Http\Middleware\EnsureTourist::class,
+            'guide' => \App\Http\Middleware\EnsureGuide::class,
+            'admin' => \App\Http\Middleware\EnsureAdmin::class,
+        ]);
+
+        // Exclude API routes and Stripe webhook from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+            'webhook/stripe',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

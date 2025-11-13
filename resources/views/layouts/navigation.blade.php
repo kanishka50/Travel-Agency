@@ -16,15 +16,37 @@
                             <a href="{{ route('tourist.dashboard') }}" class="inline-flex items-center px-1 pt-1 text-gray-900">
                                 Dashboard
                             </a>
+                            <a href="{{ route('plans.index') }}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">
+                                Browse Tours
+                            </a>
+                            <a href="{{ route('tourist-requests.index') }}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">
+                                My Requests
+                            </a>
+                            <a href="{{ route('tourist-requests.create') }}" class="inline-flex items-center px-1 pt-1 bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 font-medium">
+                                + Request Custom Tour
+                            </a>
                         @elseif(auth()->user()->isGuide())
                             <a href="{{ route('guide.dashboard') }}" class="inline-flex items-center px-1 pt-1 text-gray-900">
                                 Dashboard
                             </a>
+                            <a href="{{ route('guide.plans.index') }}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">
+                                My Plans
+                            </a>
+                            <a href="{{ route('guide.requests.index') }}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">
+                                Browse Requests
+                            </a>
                         @elseif(auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-1 pt-1 text-gray-900">
-                                Dashboard
+                            <a href="/admin" class="inline-flex items-center px-1 pt-1 text-gray-900">
+                                Admin Panel
                             </a>
                         @endif
+                    @else
+                        <a href="{{ route('plans.index') }}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">
+                            Browse Tours
+                        </a>
+                        <a href="{{ route('guide.register') }}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">
+                            Become a Guide
+                        </a>
                     @endauth
                 </div>
             </div>

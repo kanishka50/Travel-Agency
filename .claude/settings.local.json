@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan make:filament-resource:*)",
+      "Bash(php artisan:*)",
+      "Bash(if exist \"app\\Filament\\Resources\\GuideResource\\Pages\\CreateGuide.php\" del \"app\\Filament\\Resources\\GuideResource\\Pages\\CreateGuide.php\")",
+      "Bash(composer show:*)",
+      "Bash(if not exist pdfs mkdir pdfs)",
+      "Bash(composer require:*)",
+      "Bash(if not exist \"resources\\views\\payment\" mkdir \"resources\\views\\payment\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
