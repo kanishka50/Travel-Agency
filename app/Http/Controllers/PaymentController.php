@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\BookingConfirmed;
 use App\Mail\GuideNewBooking;
 use App\Models\Booking;
+use App\Models\BookingPayment;
 use App\Services\BookingPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,14 +31,26 @@ class PaymentController extends Controller
         // Set Stripe API key
         Stripe::setApiKey(config('services.stripe.secret'));
 
+        // Load relationships
+        $booking->load(['guidePlan', 'touristRequest']);
+
         try {
+            // Determine product name based on booking type
+            if ($booking->booking_type === 'custom_request' && $booking->touristRequest) {
+                $productName = $booking->touristRequest->title . ' (Custom Tour)';
+            } elseif ($booking->guidePlan) {
+                $productName = $booking->guidePlan->title;
+            } else {
+                $productName = 'Tour Booking #' . $booking->booking_number;
+            }
+
             // Create line items for the checkout
             $lineItems = [
                 [
                     'price_data' => [
                         'currency' => 'usd',
                         'product_data' => [
-                            'name' => $booking->guidePlan->title,
+                            'name' => $productName,
                             'description' => "Tour booking from {$booking->start_date->format('M d, Y')} to {$booking->end_date->format('M d, Y')}",
                         ],
                         'unit_amount' => intval($booking->total_amount * 100), // Convert to cents
@@ -46,14 +59,14 @@ class PaymentController extends Controller
                 ],
             ];
 
-            // Add add-ons to line items
+            // Add add-ons to line items (only for guide plan bookings)
             foreach ($booking->addons as $addon) {
                 $lineItems[] = [
                     'price_data' => [
                         'currency' => 'usd',
                         'product_data' => [
                             'name' => $addon->addon_name,
-                            'description' => "Add-on for {$booking->guidePlan->title}",
+                            'description' => "Add-on for {$productName}",
                         ],
                         'unit_amount' => intval($addon->total_price * 100), // Convert to cents
                     ],
@@ -167,8 +180,9 @@ class PaymentController extends Controller
                 break;
 
             default:
-                // Unexpected event type
-                return response()->json(['error' => 'Unexpected event type'], 400);
+                // Log unhandled events but return success to acknowledge receipt
+                \Log::info('Webhook: Unhandled event type', ['type' => $event->type]);
+                break;
         }
 
         return response()->json(['status' => 'success'], 200);
@@ -214,6 +228,23 @@ class PaymentController extends Controller
             'stripe_payment_id' => $session->payment_intent,
         ]);
 
+        // Create booking payment record for admin tracking
+        try {
+            BookingPayment::create([
+                'booking_id' => $booking->id,
+                'total_amount' => $booking->total_amount,
+                'platform_fee' => $booking->platform_fee,
+                'guide_payout' => $booking->guide_payout,
+                'guide_paid' => false, // Admin will mark this when they pay the guide
+            ]);
+            \Log::info('Webhook: BookingPayment record created', ['booking_id' => $bookingId]);
+        } catch (\Exception $e) {
+            \Log::error('Webhook: Failed to create BookingPayment record', [
+                'booking_id' => $bookingId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
         // Regenerate PDF with full contact details
         try {
             $pdfService = new BookingPdfService();
@@ -229,7 +260,7 @@ class PaymentController extends Controller
         // Send confirmation emails
         try {
             // Reload booking with all relationships for emails
-            $booking->load(['tourist.user', 'guide.user', 'guidePlan', 'addons']);
+            $booking->load(['tourist.user', 'guide.user', 'guidePlan', 'touristRequest', 'acceptedBid', 'addons']);
 
             // Send email to tourist
             Mail::to($booking->tourist->user->email)->send(new BookingConfirmed($booking));

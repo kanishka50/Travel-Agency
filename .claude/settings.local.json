@@ -1,13 +1,20 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php artisan make:filament-resource:*)",
-      "Bash(php artisan:*)",
-      "Bash(if exist \"app\\Filament\\Resources\\GuideResource\\Pages\\CreateGuide.php\" del \"app\\Filament\\Resources\\GuideResource\\Pages\\CreateGuide.php\")",
-      "Bash(composer show:*)",
-      "Bash(if not exist pdfs mkdir pdfs)",
-      "Bash(composer require:*)",
-      "Bash(if not exist \"resources\\views\\payment\" mkdir \"resources\\views\\payment\")"
+      "Bash(del \"h:\\Travel Agency\\tourism-platform\\resources\\views\\auth\\login.blade.php.backup\")",
+      "Bash(del \"h:\\Travel Agency\\tourism-platform\\resources\\views\\auth\\login-new.blade.php\")",
+      "Bash(if not exist \"resources\\views\\guide\\payments\" mkdir \"resources\\views\\guide\\payments\")",
+      "Bash(del \"h:\\Travel Agency\\tourism-platform\\app\\Filament\\Resources\\TouristRequestResource.php\")",
+      "Bash(echo:*)",
+      "Bash(\"h:\\Travel Agency\\tourism-platform\\app\\Filament\\Resources\\TouristRequestResource.php\")",
+      "Bash(if not exist \"h:\\Travel Agency\\tourism-platform\\app\\Filament\\Resources\\ComplaintResource\\RelationManagers\" mkdir \"h:\\Travel Agency\\tourism-platform\\app\\Filament\\Resources\\ComplaintResource\\RelationManagers\")",
+      "Bash(php -l:*)",
+      "Bash(php:*)",
+      "Bash(del \"h:\\Travel Agency\\tourism-platform\\test_complaint.php\")",
+      "Bash(del \"h:\\Travel Agency\\tourism-platform\\test_users.php\")",
+      "Bash(del \"h:\\Travel Agency\\tourism-platform\\test_names.php\")",
+      "Bash(where:*)",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Booking extends Model
 {
@@ -14,6 +15,9 @@ class Booking extends Model
         'tourist_id',
         'guide_id',
         'guide_plan_id',
+        'tourist_request_id',
+        'accepted_bid_id',
+        'accepted_proposal_id',
         'start_date',
         'end_date',
         'num_adults',
@@ -84,5 +88,45 @@ class Booking extends Model
     public function addons(): HasMany
     {
         return $this->hasMany(BookingAddon::class);
+    }
+
+    /**
+     * Get the payment record for this booking
+     */
+    public function payment(): HasOne
+    {
+        return $this->hasOne(BookingPayment::class);
+    }
+
+    /**
+     * Get the tourist request this booking originated from (for custom request bookings)
+     */
+    public function touristRequest(): BelongsTo
+    {
+        return $this->belongsTo(TouristRequest::class);
+    }
+
+    /**
+     * Get the accepted bid this booking was created from (for custom request bookings)
+     */
+    public function acceptedBid(): BelongsTo
+    {
+        return $this->belongsTo(Bid::class, 'accepted_bid_id');
+    }
+
+    /**
+     * Get the accepted proposal this booking was created from (for plan proposal bookings)
+     */
+    public function acceptedProposal(): BelongsTo
+    {
+        return $this->belongsTo(PlanProposal::class, 'accepted_proposal_id');
+    }
+
+    /**
+     * Check if this booking was created from a plan proposal
+     */
+    public function isFromProposal(): bool
+    {
+        return $this->booking_type === 'plan_proposal' && $this->accepted_proposal_id !== null;
     }
 }

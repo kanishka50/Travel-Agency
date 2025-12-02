@@ -9,7 +9,7 @@ Great news! Your payment has been successfully processed and your booking is now
 
 <x-mail::panel>
 **Booking Number:** {{ $booking->booking_number }}
-**Tour:** {{ $plan->title }}
+**Tour:** {{ $tourTitle }}
 **Start Date:** {{ $booking->start_date->format('l, F j, Y') }}
 **End Date:** {{ $booking->end_date->format('l, F j, Y') }}
 **Duration:** {{ $booking->end_date->diffInDays($booking->start_date) }} days

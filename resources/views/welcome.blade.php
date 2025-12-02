@@ -20,21 +20,37 @@
                     <a href="{{ route('plans.index') }}" class="text-gray-700 hover:text-blue-600 font-medium transition">
                         Browse Tours
                     </a>
-                    <a href="{{ route('guide.register') }}" class="text-gray-700 hover:text-blue-600 font-medium transition">
-                        Become a Guide
-                    </a>
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-blue-600 font-medium transition">
-                            Dashboard
+                    @guest
+                        <a href="{{ route('guide.register') }}" class="text-gray-700 hover:text-blue-600 font-medium transition">
+                            Become a Guide
                         </a>
-                    @else
                         <a href="{{ route('login') }}" class="text-gray-700 hover:text-blue-600 font-medium transition">
                             Login
                         </a>
                         <a href="{{ route('tourist.register.form') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                             Sign Up
                         </a>
-                    @endauth
+                    @else
+                        @if(auth()->user()->isTourist())
+                            <a href="{{ route('tourist.dashboard') }}" class="text-gray-700 hover:text-blue-600 font-medium transition">
+                                Dashboard
+                            </a>
+                        @elseif(auth()->user()->isGuide())
+                            <a href="{{ route('guide.dashboard') }}" class="text-gray-700 hover:text-blue-600 font-medium transition">
+                                Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-blue-600 font-medium transition">
+                                Dashboard
+                            </a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="text-gray-700 hover:text-blue-600 font-medium transition">
+                                Logout
+                            </button>
+                        </form>
+                    @endguest
                 </div>
             </div>
         </div>

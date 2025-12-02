@@ -205,7 +205,8 @@ class BookingController extends Controller
             abort(403, 'Unauthorized access to booking.');
         }
 
-        $booking->load(['guidePlan', 'guide.user', 'addons']);
+        // Load relationships based on booking type
+        $booking->load(['guidePlan', 'guide.user', 'addons', 'touristRequest', 'acceptedBid']);
 
         return view('bookings.show', compact('booking'));
     }
@@ -223,7 +224,7 @@ class BookingController extends Controller
         }
 
         $bookings = Booking::where('tourist_id', $tourist->id)
-            ->with(['guidePlan', 'guide.user'])
+            ->with(['guidePlan', 'guide.user', 'touristRequest'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

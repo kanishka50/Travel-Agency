@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Mail\BidAccepted;
 use App\Mail\BidRejected;
+use App\Mail\BookingConfirmation;
+use App\Mail\GuideBookingNotification;
 use App\Models\Bid;
+use App\Models\Booking;
 use App\Models\TouristRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class BidController extends Controller
 {
@@ -35,7 +40,7 @@ class BidController extends Controller
     }
 
     /**
-     * Accept a bid
+     * Accept a bid and create a booking
      */
     public function accept(TouristRequest $touristRequest, Bid $bid)
     {
@@ -80,10 +85,75 @@ class BidController extends Controller
                 'status' => 'bid_accepted',
             ]);
 
+            // ========================================
+            // CREATE BOOKING FROM ACCEPTED BID
+            // ========================================
+
+            // Calculate pricing from bid
+            $totalPrice = $bid->total_price;
+            $platformFee = $totalPrice * 0.10; // 10% platform fee
+            $totalAmount = $totalPrice + $platformFee;
+            $guidePayout = $totalPrice * 0.90; // Guide gets 90%
+
+            // Generate unique booking number
+            $bookingNumber = 'BK-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+
+            // Calculate end date based on estimated days
+            $startDate = $touristRequest->start_date;
+            $endDate = $touristRequest->end_date ?? $startDate->copy()->addDays($bid->estimated_days - 1);
+
+            // Create the booking
+            $booking = Booking::create([
+                'booking_number' => $bookingNumber,
+                'booking_type' => 'custom_request', // From custom request (not guide plan)
+                'tourist_id' => $touristRequest->tourist_id,
+                'guide_id' => $bid->guide_id,
+                'guide_plan_id' => null, // No guide plan - this is custom
+                'tourist_request_id' => $touristRequest->id,
+                'accepted_bid_id' => $bid->id,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'num_adults' => $touristRequest->num_adults,
+                'num_children' => $touristRequest->num_children,
+                'children_ages' => $touristRequest->children_ages,
+                'base_price' => $totalPrice,
+                'addons_total' => 0, // Custom requests don't have add-ons
+                'subtotal' => $totalPrice,
+                'platform_fee' => $platformFee,
+                'total_amount' => $totalAmount,
+                'guide_payout' => $guidePayout,
+                'status' => 'pending_payment',
+                'tourist_notes' => $touristRequest->special_requests,
+                'guide_notes' => $bid->day_by_day_plan, // Store the guide's proposed itinerary
+            ]);
+
+            // Generate agreement PDF for custom booking
+            $booking->load(['tourist.user', 'guide.user', 'touristRequest', 'acceptedBid']);
+            $pdf = Pdf::loadView('pdfs.custom-booking-agreement', [
+                'booking' => $booking,
+                'bid' => $bid,
+                'touristRequest' => $touristRequest,
+            ]);
+
+            // Save PDF
+            $filename = 'booking-' . $booking->booking_number . '.pdf';
+            $filePath = 'agreements/' . $filename;
+            Storage::disk('public')->put($filePath, $pdf->output());
+
+            // Update booking with PDF path
+            $booking->update(['agreement_pdf_path' => $filePath]);
+
+            // Note: tourist_request status is already set to 'bid_accepted' above
+            // The booking relationship links them together
+
             DB::commit();
 
             // Send email notification to accepted guide
-            Mail::to($bid->guide->user->email)->send(new BidAccepted($bid));
+            try {
+                Mail::to($bid->guide->user->email)->send(new BidAccepted($bid));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send BidAccepted email: ' . $e->getMessage());
+            }
 
             // Send email notifications to rejected guides
             $rejectedBids = Bid::where('tourist_request_id', $touristRequest->id)
@@ -93,16 +163,30 @@ class BidController extends Controller
                 ->get();
 
             foreach ($rejectedBids as $rejectedBid) {
-                Mail::to($rejectedBid->guide->user->email)->send(new BidRejected($rejectedBid));
+                try {
+                    Mail::to($rejectedBid->guide->user->email)->send(new BidRejected($rejectedBid));
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send BidRejected email: ' . $e->getMessage());
+                }
             }
 
-            return redirect()->route('tourist-requests.show', $touristRequest)
-                ->with('success', 'Proposal accepted! You can now proceed to create a booking with this guide.');
+            // Send booking confirmation emails
+            try {
+                Mail::to($booking->tourist->user->email)->send(new BookingConfirmation($booking));
+                Mail::to($booking->guide->user->email)->send(new GuideBookingNotification($booking));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send booking emails: ' . $e->getMessage());
+            }
+
+            // Redirect to booking page for payment
+            return redirect()->route('bookings.show', $booking->id)
+                ->with('success', 'Proposal accepted! Your booking has been created. Please complete payment to confirm.');
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Failed to accept bid and create booking: ' . $e->getMessage());
 
-            return back()->with('error', 'Failed to accept proposal. Please try again.');
+            return back()->with('error', 'Failed to accept proposal. Please try again. Error: ' . $e->getMessage());
         }
     }
 
@@ -145,4 +229,5 @@ class BidController extends Controller
             return back()->with('error', 'Failed to reject proposal. Please try again.');
         }
     }
+
 }

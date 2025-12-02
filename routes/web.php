@@ -34,7 +34,7 @@ Route::get('/dashboard', function () {
     $user = Auth::user();
 
     if ($user->isTourist()) {
-        return redirect()->route('tourist.dashboard');
+        return redirect()->route('welcome');
     } elseif ($user->isGuide()) {
         return redirect()->route('guide.dashboard');
     } elseif ($user->isAdmin()) {
@@ -47,6 +47,14 @@ Route::get('/dashboard', function () {
 // Tourist routes
 Route::middleware(['auth', 'tourist'])->prefix('tourist')->name('tourist.')->group(function () {
     Route::get('/dashboard', [TouristController::class, 'dashboard'])->name('dashboard');
+
+    // Tourist Complaint Routes
+    Route::get('/complaints', [App\Http\Controllers\Tourist\TouristComplaintController::class, 'index'])->name('complaints.index');
+    Route::get('/complaints/create', [App\Http\Controllers\Tourist\TouristComplaintController::class, 'create'])->name('complaints.create');
+    Route::post('/complaints', [App\Http\Controllers\Tourist\TouristComplaintController::class, 'store'])->name('complaints.store');
+    Route::get('/complaints/{complaint}', [App\Http\Controllers\Tourist\TouristComplaintController::class, 'show'])->name('complaints.show');
+    Route::post('/complaints/{complaint}/response', [App\Http\Controllers\Tourist\TouristComplaintController::class, 'addResponse'])->name('complaints.addResponse');
+    Route::delete('/complaints/{complaint}/withdraw', [App\Http\Controllers\Tourist\TouristComplaintController::class, 'withdraw'])->name('complaints.withdraw');
 });
 
 // Tourist Request routes (Tourist only)
@@ -78,6 +86,13 @@ Route::middleware(['auth', 'tourist'])->group(function () {
     Route::post('/payment/checkout/{booking}', [App\Http\Controllers\PaymentController::class, 'createCheckoutSession'])->name('payment.checkout');
     Route::get('/payment/success/{booking}', [App\Http\Controllers\PaymentController::class, 'success'])->name('payment.success');
     Route::get('/payment/cancel/{booking}', [App\Http\Controllers\PaymentController::class, 'cancel'])->name('payment.cancel');
+
+    // Plan Proposal routes (Tourist)
+    Route::get('/proposals', [App\Http\Controllers\PlanProposalController::class, 'touristIndex'])->name('tourist.proposals.index');
+    Route::get('/proposals/{proposal}', [App\Http\Controllers\PlanProposalController::class, 'touristShow'])->name('tourist.proposals.show');
+    Route::get('/plans/{plan}/propose', [App\Http\Controllers\PlanProposalController::class, 'create'])->name('proposals.create');
+    Route::post('/plans/{plan}/propose', [App\Http\Controllers\PlanProposalController::class, 'store'])->name('proposals.store');
+    Route::post('/proposals/{proposal}/cancel', [App\Http\Controllers\PlanProposalController::class, 'cancel'])->name('proposals.cancel');
 });
 
 // Stripe Webhook (No authentication - Stripe will verify via signature)
@@ -106,6 +121,24 @@ Route::middleware(['auth', 'guide'])->prefix('guide')->name('guide.')->group(fun
     Route::get('/requests/{touristRequest}/bid', [App\Http\Controllers\Guide\BidController::class, 'create'])->name('bids.create');
     Route::post('/requests/{touristRequest}/bid', [App\Http\Controllers\Guide\BidController::class, 'store'])->name('bids.store');
     Route::post('/bids/{bid}/withdraw', [App\Http\Controllers\Guide\BidController::class, 'withdraw'])->name('bids.withdraw');
+
+    // Guide Plan Proposal Routes
+    Route::get('/proposals', [App\Http\Controllers\PlanProposalController::class, 'guideIndex'])->name('proposals.index');
+    Route::get('/proposals/{proposal}', [App\Http\Controllers\PlanProposalController::class, 'guideShow'])->name('proposals.show');
+    Route::post('/proposals/{proposal}/accept', [App\Http\Controllers\PlanProposalController::class, 'accept'])->name('proposals.accept');
+    Route::post('/proposals/{proposal}/reject', [App\Http\Controllers\PlanProposalController::class, 'reject'])->name('proposals.reject');
+
+    // Guide Payment Routes
+    Route::get('/payments', [App\Http\Controllers\Guide\GuidePaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/{payment}', [App\Http\Controllers\Guide\GuidePaymentController::class, 'show'])->name('payments.show');
+
+    // Guide Complaint Routes
+    Route::get('/complaints', [App\Http\Controllers\Guide\GuideComplaintController::class, 'index'])->name('complaints.index');
+    Route::get('/complaints/create', [App\Http\Controllers\Guide\GuideComplaintController::class, 'create'])->name('complaints.create');
+    Route::post('/complaints', [App\Http\Controllers\Guide\GuideComplaintController::class, 'store'])->name('complaints.store');
+    Route::get('/complaints/{complaint}', [App\Http\Controllers\Guide\GuideComplaintController::class, 'show'])->name('complaints.show');
+    Route::post('/complaints/{complaint}/response', [App\Http\Controllers\Guide\GuideComplaintController::class, 'addResponse'])->name('complaints.addResponse');
+    Route::delete('/complaints/{complaint}/withdraw', [App\Http\Controllers\Guide\GuideComplaintController::class, 'withdraw'])->name('complaints.withdraw');
 });
 
 

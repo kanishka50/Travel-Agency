@@ -18,13 +18,24 @@ class BookingPdfService
     public function generateAgreementPdf(Booking $booking, bool $includeFullContacts = false): string
     {
         // Load all necessary relationships
-        $booking->load(['tourist.user', 'guide.user', 'guidePlan', 'addons']);
+        $booking->load(['tourist.user', 'guide.user', 'guidePlan', 'touristRequest', 'acceptedBid', 'addons']);
 
-        // Generate PDF from view
-        $pdf = Pdf::loadView('pdfs.booking-agreement', [
-            'booking' => $booking,
-            'includeFullContacts' => $includeFullContacts,
-        ]);
+        // Determine which view to use based on booking type
+        if ($booking->booking_type === 'custom_request' && $booking->touristRequest) {
+            // Custom request booking - use custom-booking-agreement view
+            $pdf = Pdf::loadView('pdfs.custom-booking-agreement', [
+                'booking' => $booking,
+                'bid' => $booking->acceptedBid,
+                'touristRequest' => $booking->touristRequest,
+                'includeFullContacts' => $includeFullContacts,
+            ]);
+        } else {
+            // Standard guide plan booking
+            $pdf = Pdf::loadView('pdfs.booking-agreement', [
+                'booking' => $booking,
+                'includeFullContacts' => $includeFullContacts,
+            ]);
+        }
 
         // Create filename
         $filename = 'booking-' . $booking->booking_number . '.pdf';

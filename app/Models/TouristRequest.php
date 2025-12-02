@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class TouristRequest extends Model
 {
@@ -121,5 +122,21 @@ class TouristRequest extends Model
     {
         return $query->where('expires_at', '<=', now())
                     ->where('status', 'open');
+    }
+
+    /**
+     * Get the booking created from this request
+     */
+    public function booking(): HasOne
+    {
+        return $this->hasOne(Booking::class);
+    }
+
+    /**
+     * Check if request has been booked
+     */
+    public function isBooked(): bool
+    {
+        return $this->status === 'booked';
     }
 }

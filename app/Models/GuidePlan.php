@@ -37,6 +37,8 @@ class GuidePlan extends Model
         'exclusions',
         'cover_photo',
         'status',
+        'allow_proposals',
+        'min_proposal_price',
         'view_count',
         'booking_count',
     ];
@@ -50,6 +52,8 @@ class GuidePlan extends Model
         'available_start_date' => 'date',
         'available_end_date' => 'date',
         'vehicle_ac' => 'boolean',
+        'allow_proposals' => 'boolean',
+        'min_proposal_price' => 'decimal:2',
     ];
 
     // Relationships
@@ -66,6 +70,16 @@ class GuidePlan extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'plan_id');
+    }
+
+    public function proposals(): HasMany
+    {
+        return $this->hasMany(PlanProposal::class);
+    }
+
+    public function pendingProposals(): HasMany
+    {
+        return $this->hasMany(PlanProposal::class)->where('status', 'pending');
     }
 
     // Helper methods
@@ -92,5 +106,13 @@ class GuidePlan extends Model
     public function incrementBookingCount(): void
     {
         $this->increment('booking_count');
+    }
+
+    /**
+     * Check if proposals are allowed for this plan
+     */
+    public function allowsProposals(): bool
+    {
+        return $this->allow_proposals ?? true;
     }
 }

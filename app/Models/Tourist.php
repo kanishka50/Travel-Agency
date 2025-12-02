@@ -42,4 +42,14 @@ class Tourist extends Model
     {
         return $this->hasMany(Favorite::class);
     }
+
+    public function planProposals(): HasMany
+    {
+        return $this->hasMany(PlanProposal::class);
+    }
+
+    public function pendingProposals(): HasMany
+    {
+        return $this->hasMany(PlanProposal::class)->where('status', 'pending');
+    }
 }

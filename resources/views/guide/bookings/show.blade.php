@@ -46,29 +46,85 @@
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <h2 class="text-xl font-semibold text-gray-900 mb-4">Tour Information</h2>
                     <div class="space-y-4">
-                        <div>
-                            <h3 class="font-semibold text-lg text-gray-900">{{ $booking->guidePlan->title }}</h3>
-                            <p class="text-gray-600 mt-1">{{ $booking->guidePlan->description }}</p>
-                        </div>
+                        @if($booking->booking_type === 'custom_request' && $booking->touristRequest)
+                            {{-- Custom Request Booking --}}
+                            <div>
+                                <span class="inline-block px-2 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded mb-2">Custom Tour Request</span>
+                                <h3 class="font-semibold text-lg text-gray-900">{{ $booking->touristRequest->title }}</h3>
+                                <p class="text-gray-600 mt-1">{{ $booking->touristRequest->description }}</p>
+                            </div>
 
-                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-                            <div>
-                                <span class="text-sm text-gray-500">Start Date</span>
-                                <p class="font-semibold text-gray-900">{{ $booking->start_date->format('M d, Y') }}</p>
+                            @if($booking->acceptedBid && $booking->acceptedBid->day_by_day_plan)
+                                <div class="pt-4 border-t border-gray-200">
+                                    <span class="text-sm text-gray-500 font-medium">Your Proposed Itinerary</span>
+                                    <div class="mt-2 bg-gray-50 p-4 rounded-lg">
+                                        <pre class="whitespace-pre-wrap text-sm text-gray-700 font-sans">{{ $booking->acceptedBid->day_by_day_plan }}</pre>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                                <div>
+                                    <span class="text-sm text-gray-500">Start Date</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->start_date->format('M d, Y') }}</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">End Date</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->end_date->format('M d, Y') }}</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Duration</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->start_date->diffInDays($booking->end_date) + 1 }} days</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Destinations</span>
+                                    <p class="font-semibold text-gray-900">
+                                        @if(is_array($booking->touristRequest->preferred_destinations))
+                                            {{ implode(', ', $booking->touristRequest->preferred_destinations) }}
+                                        @else
+                                            {{ $booking->touristRequest->preferred_destinations }}
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
+                        @elseif($booking->guidePlan)
+                            {{-- Standard Guide Plan Booking --}}
                             <div>
-                                <span class="text-sm text-gray-500">End Date</span>
-                                <p class="font-semibold text-gray-900">{{ $booking->end_date->format('M d, Y') }}</p>
+                                <h3 class="font-semibold text-lg text-gray-900">{{ $booking->guidePlan->title }}</h3>
+                                <p class="text-gray-600 mt-1">{{ $booking->guidePlan->description }}</p>
                             </div>
-                            <div>
-                                <span class="text-sm text-gray-500">Duration</span>
-                                <p class="font-semibold text-gray-900">{{ $booking->start_date->diffInDays($booking->end_date) + 1 }} days</p>
+
+                            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                                <div>
+                                    <span class="text-sm text-gray-500">Start Date</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->start_date->format('M d, Y') }}</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">End Date</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->end_date->format('M d, Y') }}</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Duration</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->start_date->diffInDays($booking->end_date) + 1 }} days</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Location</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->guidePlan->destination }}</p>
+                                </div>
                             </div>
-                            <div>
-                                <span class="text-sm text-gray-500">Location</span>
-                                <p class="font-semibold text-gray-900">{{ $booking->guidePlan->destination }}</p>
+                        @else
+                            {{-- Fallback --}}
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-sm text-gray-500">Start Date</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->start_date->format('M d, Y') }}</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">End Date</span>
+                                    <p class="font-semibold text-gray-900">{{ $booking->end_date->format('M d, Y') }}</p>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -219,9 +275,15 @@
                         <a href="{{ route('guide.bookings') }}" class="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 rounded-lg transition-colors">
                             View All Bookings
                         </a>
-                        <a href="{{ route('guide.plans.show', $booking->guidePlan->id) }}" class="block w-full text-center bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold py-2 rounded-lg transition-colors">
-                            View Tour Details
-                        </a>
+                        @if($booking->guidePlan)
+                            <a href="{{ route('guide.plans.show', $booking->guidePlan->id) }}" class="block w-full text-center bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold py-2 rounded-lg transition-colors">
+                                View Tour Details
+                            </a>
+                        @elseif($booking->touristRequest)
+                            <a href="{{ route('guide.requests.show', $booking->touristRequest->id) }}" class="block w-full text-center bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-2 rounded-lg transition-colors">
+                                View Original Request
+                            </a>
+                        @endif
                     </div>
                 </div>
 

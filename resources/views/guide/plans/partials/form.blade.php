@@ -255,6 +255,52 @@
     </div>
 </div>
 
+{{-- Proposal Settings --}}
+<div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Proposal Settings</h2>
+    <p class="text-gray-600 text-sm mb-4">Allow tourists to send price proposals for this tour. They can request modifications and negotiate pricing.</p>
+
+    <div class="space-y-4">
+        <div class="flex items-center">
+            <input type="hidden" name="allow_proposals" value="0">
+            <input type="checkbox" name="allow_proposals" id="allow_proposals" value="1"
+                {{ old('allow_proposals', $plan?->allow_proposals ?? true) ? 'checked' : '' }}
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <label for="allow_proposals" class="ml-2 block text-sm text-gray-900 font-medium">Allow tourists to send proposals</label>
+        </div>
+
+        <div id="proposal_settings" class="{{ old('allow_proposals', $plan?->allow_proposals ?? true) ? '' : 'hidden' }}">
+            <label for="min_proposal_price" class="block text-sm font-medium text-gray-700 mb-1">Minimum Acceptable Price (USD)</label>
+            <div class="relative max-w-xs">
+                <span class="absolute left-3 top-2 text-gray-500">$</span>
+                <input type="number" name="min_proposal_price" id="min_proposal_price"
+                    value="{{ old('min_proposal_price', $plan?->min_proposal_price ?? '') }}"
+                    min="0" step="0.01"
+                    class="w-full pl-7 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Leave empty for no minimum">
+            </div>
+            <p class="mt-1 text-sm text-gray-500">Proposals below this price will show a warning to tourists, but they can still submit.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const allowProposals = document.getElementById('allow_proposals');
+    const proposalSettings = document.getElementById('proposal_settings');
+
+    if (allowProposals && proposalSettings) {
+        allowProposals.addEventListener('change', function() {
+            if (this.checked) {
+                proposalSettings.classList.remove('hidden');
+            } else {
+                proposalSettings.classList.add('hidden');
+            }
+        });
+    }
+});
+</script>
+
 {{-- Cover Photo --}}
 <div class="bg-white rounded-lg shadow p-6">
     <h2 class="text-xl font-semibold text-gray-900 mb-4">Cover Photo</h2>

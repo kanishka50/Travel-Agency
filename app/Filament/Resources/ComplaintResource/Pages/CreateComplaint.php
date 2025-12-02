@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Filament\Resources\ComplaintResource\Pages;
+
+use App\Filament\Resources\ComplaintResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateComplaint extends CreateRecord
+{
+    protected static string $resource = ComplaintResource::class;
+
+    // Note: This page exists but should rarely be used
+    // Complaints are typically filed by tourists/guides, not created by admins
+}

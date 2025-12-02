@@ -163,13 +163,6 @@
 
             <!-- Sidebar -->
             <div class="lg:col-span-1">
-                <!-- Debug: Show bid status -->
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                    <p class="text-sm"><strong>Debug Info:</strong></p>
-                    <p class="text-sm">Bid Status: <strong>{{ $bid->status }}</strong></p>
-                    <p class="text-sm">Status Check: {{ $bid->status === 'pending' ? 'TRUE' : 'FALSE' }}</p>
-                </div>
-
                 <!-- Action Buttons -->
                 @if($bid->status === 'pending')
                 <div class="bg-white rounded-lg shadow-sm p-6 sticky top-6 space-y-4">
@@ -215,10 +208,25 @@
                 @elseif($bid->status === 'accepted')
                 <div class="bg-green-50 border border-green-200 rounded-lg p-6 sticky top-6">
                     <h3 class="font-semibold text-green-900 mb-2">Proposal Accepted</h3>
-                    <p class="text-sm text-green-700 mb-4">You have accepted this proposal. You can now proceed to create a booking with this guide.</p>
-                    <a href="#" class="block w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 text-center font-semibold shadow-md hover:shadow-lg transition-all">
-                        Create Booking
-                    </a>
+
+                    @if($touristRequest->booking)
+                        {{-- Booking exists - show link to booking --}}
+                        <p class="text-sm text-green-700 mb-4">Your booking has been created! Proceed to complete the payment.</p>
+                        <a href="{{ route('bookings.show', $touristRequest->booking->id) }}"
+                           class="block w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 text-center font-semibold shadow-md hover:shadow-lg transition-all">
+                            @if($touristRequest->booking->status === 'pending_payment')
+                                Go to Payment
+                            @else
+                                View Booking
+                            @endif
+                        </a>
+                        <p class="text-xs text-gray-600 mt-2 text-center">
+                            Booking #{{ $touristRequest->booking->booking_number }}
+                        </p>
+                    @else
+                        {{-- Edge case: Old accepted bid without booking --}}
+                        <p class="text-sm text-green-700">This proposal was accepted. Please contact support if you need assistance with your booking.</p>
+                    @endif
                 </div>
                 @elseif($bid->status === 'rejected')
                 <div class="bg-red-50 border border-red-200 rounded-lg p-6 sticky top-6">

@@ -277,6 +277,8 @@ class GuidePlanController extends Controller
             'exclusions' => ['required', 'string'],
             'cover_photo' => ['nullable', 'image', 'max:5120'], // 5MB max
             'status' => ['required', Rule::in(['draft', 'active', 'inactive'])],
+            'allow_proposals' => ['nullable', 'boolean'],
+            'min_proposal_price' => ['nullable', 'numeric', 'min:0'],
         ]);
     }
 }

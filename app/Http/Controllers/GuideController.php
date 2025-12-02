@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\PlanProposal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,13 +20,13 @@ class GuideController extends Controller
             ->whereIn('status', ['pending_payment', 'confirmed'])
             ->where('start_date', '>', Carbon::now())
             ->orderBy('start_date', 'asc')
-            ->with(['tourist.user', 'guidePlan'])
+            ->with(['tourist.user', 'guidePlan', 'touristRequest'])
             ->take(5)
             ->get();
 
         $ongoingBookings = Booking::where('guide_id', $guide->id)
             ->where('status', 'ongoing')
-            ->with(['tourist.user', 'guidePlan'])
+            ->with(['tourist.user', 'guidePlan', 'touristRequest'])
             ->get();
 
         $totalBookings = Booking::where('guide_id', $guide->id)
@@ -46,14 +47,29 @@ class GuideController extends Controller
             ->whereYear('created_at', Carbon::now()->year)
             ->sum('guide_payout');
 
+        // Get pending proposals count
+        $pendingProposals = PlanProposal::whereHas('guidePlan', function ($q) use ($guide) {
+            $q->where('guide_id', $guide->id);
+        })->where('status', 'pending')->count();
+
         // Get calendar events (all bookings)
         $calendarBookings = Booking::where('guide_id', $guide->id)
             ->whereIn('status', ['pending_payment', 'confirmed', 'ongoing'])
+            ->with(['guidePlan', 'touristRequest'])
             ->get()
             ->map(function ($booking) {
+                // Determine title based on booking type
+                if ($booking->booking_type === 'custom_request' && $booking->touristRequest) {
+                    $title = $booking->touristRequest->title . ' (Custom)';
+                } elseif ($booking->guidePlan) {
+                    $title = $booking->guidePlan->title;
+                } else {
+                    $title = 'Booking #' . $booking->booking_number;
+                }
+
                 return [
                     'id' => $booking->id,
-                    'title' => $booking->guidePlan->title ?? 'Booking',
+                    'title' => $title,
                     'start' => $booking->start_date->format('Y-m-d'),
                     'end' => $booking->end_date->addDay()->format('Y-m-d'),
                     'color' => $booking->status === 'confirmed' ? '#10b981' : ($booking->status === 'ongoing' ? '#8b5cf6' : '#f59e0b'),
@@ -70,7 +86,8 @@ class GuideController extends Controller
             'pendingPayment',
             'totalEarnings',
             'thisMonthEarnings',
-            'calendarBookings'
+            'calendarBookings',
+            'pendingProposals'
         ));
     }
 
@@ -79,7 +96,7 @@ class GuideController extends Controller
         $guide = Auth::user()->guide;
 
         $query = Booking::where('guide_id', $guide->id)
-            ->with(['tourist.user', 'guidePlan', 'addons']);
+            ->with(['tourist.user', 'guidePlan', 'touristRequest', 'addons']);
 
         // Filter by status
         if ($request->has('status') && $request->status !== 'all') {
@@ -116,7 +133,7 @@ class GuideController extends Controller
             abort(403, 'Unauthorized access to booking.');
         }
 
-        $booking->load(['tourist.user', 'guidePlan', 'addons']);
+        $booking->load(['tourist.user', 'guidePlan', 'touristRequest', 'acceptedBid', 'addons']);
 
         return view('guide.bookings.show', compact('booking'));
     }

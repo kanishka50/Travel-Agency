@@ -86,7 +86,16 @@
                             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                                 <div class="flex justify-between items-start">
                                     <div class="flex-1">
-                                        <h3 class="font-semibold text-gray-900">{{ $booking->guidePlan->title }}</h3>
+                                        <h3 class="font-semibold text-gray-900">
+                                            @if($booking->booking_type === 'custom_request' && $booking->touristRequest)
+                                                {{ $booking->touristRequest->title }}
+                                                <span class="ml-2 px-2 py-0.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded">Custom</span>
+                                            @elseif($booking->guidePlan)
+                                                {{ $booking->guidePlan->title }}
+                                            @else
+                                                Booking #{{ $booking->booking_number }}
+                                            @endif
+                                        </h3>
                                         <p class="text-sm text-gray-600 mt-1">
                                             {{ $booking->start_date->format('M d, Y') }} - {{ $booking->end_date->format('M d, Y') }}
                                         </p>
@@ -145,6 +154,15 @@
                         </svg>
                         <span class="text-gray-700 font-medium">View All Bookings</span>
                     </a>
+                    <a href="{{ route('guide.proposals.index') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        <span class="text-gray-700 font-medium">View Proposals</span>
+                        @if(isset($pendingProposals) && $pendingProposals > 0)
+                            <span class="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingProposals }}</span>
+                        @endif
+                    </a>
                 </div>
             </div>
 
@@ -154,7 +172,16 @@
                     <h3 class="text-lg font-semibold text-purple-900 mb-3">Ongoing Tours</h3>
                     @foreach($ongoingBookings as $booking)
                         <div class="bg-white rounded-lg p-4 mb-3 shadow-sm">
-                            <h4 class="font-semibold text-gray-900">{{ $booking->guidePlan->title }}</h4>
+                            <h4 class="font-semibold text-gray-900">
+                                @if($booking->booking_type === 'custom_request' && $booking->touristRequest)
+                                    {{ $booking->touristRequest->title }}
+                                    <span class="ml-1 px-1.5 py-0.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded">Custom</span>
+                                @elseif($booking->guidePlan)
+                                    {{ $booking->guidePlan->title }}
+                                @else
+                                    Booking #{{ $booking->booking_number }}
+                                @endif
+                            </h4>
                             <p class="text-sm text-gray-600 mt-1">Ends: {{ $booking->end_date->format('M d, Y') }}</p>
                             <a href="{{ route('guide.bookings.show', $booking->id) }}" class="text-purple-600 hover:text-purple-800 text-sm font-semibold mt-2 inline-block">View Details →</a>
                         </div>

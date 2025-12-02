@@ -39,13 +39,22 @@ class BookingConfirmed extends Mailable
      */
     public function content(): Content
     {
+        // Determine tour title based on booking type
+        if ($this->booking->booking_type === 'custom_request' && $this->booking->touristRequest) {
+            $tourTitle = $this->booking->touristRequest->title . ' (Custom Tour)';
+        } elseif ($this->booking->guidePlan) {
+            $tourTitle = $this->booking->guidePlan->title;
+        } else {
+            $tourTitle = 'Tour Booking #' . $this->booking->booking_number;
+        }
+
         return new Content(
             markdown: 'emails.booking-confirmed',
             with: [
                 'booking' => $this->booking,
                 'tourist' => $this->booking->tourist,
                 'guide' => $this->booking->guide,
-                'plan' => $this->booking->guidePlan,
+                'tourTitle' => $tourTitle,
             ],
         );
     }

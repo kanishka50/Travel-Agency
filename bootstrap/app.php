@@ -23,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/*',
             'webhook/stripe',
         ]);
+
+        // Security: Rate limiting for authentication routes
+        $middleware->throttleApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

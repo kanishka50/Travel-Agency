@@ -80,7 +80,14 @@
                                     <div class="flex items-start justify-between mb-3">
                                         <div>
                                             <h3 class="text-xl font-semibold text-gray-900">
-                                                {{ $booking->guidePlan->title }}
+                                                @if($booking->booking_type === 'custom_request' && $booking->touristRequest)
+                                                    {{ $booking->touristRequest->title }}
+                                                    <span class="ml-2 px-2 py-0.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded">Custom</span>
+                                                @elseif($booking->guidePlan)
+                                                    {{ $booking->guidePlan->title }}
+                                                @else
+                                                    Booking #{{ $booking->booking_number }}
+                                                @endif
                                             </h3>
                                             <p class="text-sm text-gray-500 mt-1">{{ $booking->booking_number }}</p>
                                         </div>

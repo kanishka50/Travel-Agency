@@ -3,13 +3,13 @@
 
 Hi {{ $guide->full_name }},
 
-Congratulations! You have received a new booking for your tour "**{{ $plan->title }}**".
+Congratulations! You have received a new booking for "**{{ $tourTitle }}**".
 
 ## Booking Details
 
 <x-mail::panel>
 **Booking Number:** {{ $booking->booking_number }}
-**Tour:** {{ $plan->title }}
+**Tour:** {{ $tourTitle }}
 **Start Date:** {{ $booking->start_date->format('l, F j, Y') }}
 **End Date:** {{ $booking->end_date->format('l, F j, Y') }}
 **Duration:** {{ $booking->end_date->diffInDays($booking->start_date) }} days
