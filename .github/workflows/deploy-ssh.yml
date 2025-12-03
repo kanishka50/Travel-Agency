@@ -1,0 +1,77 @@
+name: Deploy to Hostinger (SSH)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js and build assets
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      # Step 3: Upload built assets to server via SCP
+      - name: Upload built assets via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "public/build/*"
+          target: "~/public_html/"
+          strip_components: 0
+
+      # Step 4: Run deployment commands via SSH
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "🚀 Starting deployment..."
+
+            # Navigate to project directory
+            cd ~/public_html
+
+            # Pull latest changes from GitHub
+            echo "📥 Pulling latest code..."
+            git pull origin main
+
+            # Install PHP dependencies
+            echo "📦 Installing Composer dependencies..."
+            composer install --no-dev --optimize-autoloader --no-interaction
+
+            # Run Laravel optimization commands
+            echo "⚡ Optimizing Laravel..."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # Run migrations (if any)
+            echo "🗃️ Running migrations..."
+            php artisan migrate --force
+
+            # Clear old caches
+            php artisan cache:clear
+
+            echo "✅ Deployment complete!"
