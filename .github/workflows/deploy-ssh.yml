@@ -36,7 +36,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: 65002
           source: "public/build/*"
-          target: "~/public_html/"
+          target: "~/domains/brown-reindeer-419043.hostingersite.com/public_html/"
           strip_components: 0
 
       # Step 4: Run deployment commands via SSH
@@ -51,7 +51,7 @@ jobs:
             echo "Starting deployment..."
 
             # Navigate to project directory
-            cd ~/public_html
+            cd ~/domains/brown-reindeer-419043.hostingersite.com/public_html
 
             # Pull latest changes from GitHub
             echo "Pulling latest code..."
