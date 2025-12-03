@@ -14,7 +14,8 @@
       "Bash(del \"h:\\Travel Agency\\tourism-platform\\test_users.php\")",
       "Bash(del \"h:\\Travel Agency\\tourism-platform\\test_names.php\")",
       "Bash(where:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(if not exist \"h:\\Travel Agency\\tourism-platform\\.github\\workflows\" mkdir \"h:\\Travel Agency\\tourism-platform\\.github\\workflows\")"
     ],
     "deny": [],
     "ask": []
