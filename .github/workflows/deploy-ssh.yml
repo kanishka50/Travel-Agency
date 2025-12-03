@@ -41,6 +41,7 @@ jobs:
 
       # Step 4: Run deployment commands via SSH
       - name: Deploy via SSH
+        if: always()  # Run even if previous step fails
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
