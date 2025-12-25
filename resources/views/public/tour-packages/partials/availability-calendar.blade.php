@@ -1,61 +1,84 @@
 {{-- Availability Calendar --}}
-<div class="bg-white rounded-xl shadow-sm border p-6">
-    <h3 class="font-semibold text-gray-900 mb-4 flex items-center">
-        <svg class="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-        Check Availability
-    </h3>
-
-    <!-- Calendar Container -->
-    <div id="availability-calendar" class="mb-4"></div>
-
-    <!-- Tour Duration Notice -->
-    <div class="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-        <p class="text-sm text-emerald-800">
-            <strong>Tour Duration:</strong> {{ $plan->num_days }} day{{ $plan->num_days > 1 ? 's' : '' }} / {{ $plan->num_nights }} night{{ $plan->num_nights > 1 ? 's' : '' }}
-        </p>
-        <p class="text-xs text-emerald-600 mt-1">
-            Click on an available date to select your tour start date
-        </p>
+<div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-5 text-white">
+        <h3 class="font-display text-lg font-semibold flex items-center gap-3">
+            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            Check Availability
+        </h3>
     </div>
 
-    <!-- Availability Result -->
-    <div id="availability-result" class="hidden mb-4">
-        <div id="availability-message" class="p-4 rounded-lg"></div>
-        <div id="selected-dates" class="mt-2 text-sm text-gray-600"></div>
-    </div>
+    <div class="p-6">
+        <!-- Calendar Container -->
+        <div id="availability-calendar" class="mb-5"></div>
 
-    <!-- Book Now Button -->
-    <button id="book-now-btn" class="w-full px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>
-        <span id="book-btn-text">Select dates to continue</span>
-    </button>
+        <!-- Tour Duration Notice -->
+        <div class="mb-5 p-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+            <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-slate-800">
+                        Tour Duration: {{ $plan->num_days }} day{{ $plan->num_days > 1 ? 's' : '' }} / {{ $plan->num_nights ?? $plan->num_days - 1 }} night{{ ($plan->num_nights ?? $plan->num_days - 1) > 1 ? 's' : '' }}
+                    </p>
+                    <p class="text-xs text-amber-700 mt-1">
+                        Click on an available date to select your tour start date
+                    </p>
+                </div>
+            </div>
+        </div>
 
-    <!-- Calendar Legend -->
-    <div class="mt-4 pt-4 border-t">
-        <p class="text-xs font-medium text-gray-700 mb-2">Legend:</p>
-        <div class="flex flex-wrap gap-3 text-xs">
-            <div class="flex items-center">
-                <div class="w-3 h-3 rounded bg-emerald-100 border-2 border-emerald-500 mr-1"></div>
-                <span class="text-gray-600">Available</span>
-            </div>
-            <div class="flex items-center">
-                <div class="w-3 h-3 rounded bg-red-100 border-2 border-red-500 mr-1"></div>
-                <span class="text-gray-600">Booked</span>
-            </div>
-            <div class="flex items-center">
-                <div class="w-3 h-3 rounded bg-gray-200 mr-1"></div>
-                <span class="text-gray-600">Past/Unavailable</span>
-            </div>
-            <div class="flex items-center">
-                <div class="w-3 h-3 rounded bg-emerald-500 mr-1"></div>
-                <span class="text-gray-600">Selected</span>
+        <!-- Availability Result -->
+        <div id="availability-result" class="hidden mb-5">
+            <div id="availability-message" class="p-4 rounded-xl"></div>
+            <div id="selected-dates" class="mt-3 px-4 py-3 bg-slate-50 rounded-lg text-sm text-slate-700"></div>
+        </div>
+
+        <!-- Book Now Button -->
+        <button id="book-now-btn"
+                class="w-full py-4 bg-slate-200 text-slate-400 font-semibold rounded-xl transition-all duration-300 disabled:cursor-not-allowed"
+                disabled>
+            <span id="book-btn-text" class="flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Select dates to continue
+            </span>
+        </button>
+
+        <!-- Calendar Legend -->
+        <div class="mt-6 pt-5 border-t border-slate-100">
+            <p class="text-xs font-semibold text-slate-700 mb-3 uppercase tracking-wide">Legend</p>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                    <div class="w-4 h-4 rounded bg-gradient-to-br from-amber-100 to-amber-200 border-2 border-amber-500"></div>
+                    <span class="text-xs text-slate-600">Available</span>
+                </div>
+                <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                    <div class="w-4 h-4 rounded bg-red-100 border-2 border-red-400"></div>
+                    <span class="text-xs text-slate-600">Booked</span>
+                </div>
+                <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                    <div class="w-4 h-4 rounded bg-slate-200"></div>
+                    <span class="text-xs text-slate-600">Unavailable</span>
+                </div>
+                <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                    <div class="w-4 h-4 rounded bg-gradient-to-br from-amber-500 to-orange-500"></div>
+                    <span class="text-xs text-slate-600">Selected</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- FullCalendar CSS & JS (Combined in one script) -->
+<!-- FullCalendar JS -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
 
 <script>
@@ -87,19 +110,18 @@ document.addEventListener('DOMContentLoaded', function() {
             right: ''
         },
         height: 'auto',
-        firstDay: 1, // Start week on Monday
+        firstDay: 1,
         selectable: false,
         selectMirror: false,
         dayMaxEvents: false,
         validRange: function(nowDate) {
-            // Set valid range based on availability type
             let startDate = new Date();
             let endDate = null;
 
             if (availabilityType === 'date_range' && availableStartDate && availableEndDate) {
                 startDate = new Date(availableStartDate);
                 endDate = new Date(availableEndDate);
-                endDate.setDate(endDate.getDate() + 1); // Make it inclusive
+                endDate.setDate(endDate.getDate() + 1);
             }
 
             return {
@@ -108,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         },
         datesSet: function(info) {
-            // Load availability when month changes
             loadAvailability(info.start, info.end);
         },
         dateClick: function(info) {
@@ -118,7 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return getDayCellClass(arg.date);
         },
         dayCellDidMount: function(arg) {
-            // Add tooltip or additional styling if needed
             const cellClass = getDayCellClass(arg.date);
             if (cellClass.includes('booked')) {
                 arg.el.title = 'This date is already booked';
@@ -133,47 +153,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calendar.render();
 
-    // Load availability data from API
+    // Load availability data
     async function loadAvailability(startDate, endDate) {
         try {
             const month = new Date(startDate.getFullYear(), startDate.getMonth(), 15);
             const response = await fetch(`/api/plans/${planId}/availability?month=${month.toISOString()}`);
             const data = await response.json();
-
             bookedDates = data.booked_dates || [];
-
-            // Refresh calendar rendering
             calendar.render();
         } catch (error) {
             console.error('Error loading availability:', error);
         }
     }
 
-    // Get CSS class for day cell based on its status
+    // Get CSS class for day cell
     function getDayCellClass(date) {
         const dateStr = formatDateToYMD(date);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         date.setHours(0, 0, 0, 0);
 
-        // Check if date is in the past
         if (date < today) {
             return 'fc-day-past';
         }
 
-        // Check if date is outside available range (for seasonal plans)
         if (availabilityType === 'date_range' && availableStartDate && availableEndDate) {
             if (dateStr < availableStartDate || dateStr > availableEndDate) {
                 return 'fc-day-unavailable';
             }
         }
 
-        // Check if date is within a booked range
         if (isDateBooked(dateStr)) {
             return 'fc-day-booked';
         }
 
-        // Check if date is selected
         if (selectedStartDate && selectedEndDate) {
             const selectedStart = new Date(selectedStartDate);
             const selectedEnd = new Date(selectedEndDate);
@@ -182,20 +195,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Date is available
         return 'fc-day-available';
     }
 
-    // Check if a date is booked
+    // Check if date is booked
     function isDateBooked(dateStr) {
         for (let booking of bookedDates) {
             const bookingStart = new Date(booking.start);
             const bookingEnd = new Date(booking.end);
             const checkDate = new Date(dateStr);
-
-            // Adjust for FullCalendar's exclusive end date
             bookingEnd.setDate(bookingEnd.getDate() - 1);
-
             if (checkDate >= bookingStart && checkDate <= bookingEnd) {
                 return true;
             }
@@ -210,7 +219,6 @@ document.addEventListener('DOMContentLoaded', function() {
         today.setHours(0, 0, 0, 0);
         date.setHours(0, 0, 0, 0);
 
-        // Check if date is clickable
         if (date < today) {
             showMessage('error', 'Cannot select past dates.');
             return;
@@ -228,18 +236,22 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Check availability via API
         await checkAvailability(dateStr);
     }
 
-    // Check availability for selected start date
+    // Check availability
     async function checkAvailability(startDate) {
-        // Show loading state
         bookNowBtn.disabled = true;
-        bookBtnText.textContent = 'Checking availability...';
+        bookBtnText.innerHTML = `
+            <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Checking availability...
+        `;
         availabilityResult.classList.remove('hidden');
-        availabilityMessage.className = 'p-4 rounded-lg bg-gray-100';
-        availabilityMessage.innerHTML = '<p class="text-gray-600">Checking availability...</p>';
+        availabilityMessage.className = 'p-4 rounded-xl bg-slate-100';
+        availabilityMessage.innerHTML = '<p class="text-slate-600 flex items-center gap-2"><svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Checking availability...</p>';
 
         try {
             const response = await fetch(`/api/plans/${planId}/check-dates`, {
@@ -254,40 +266,44 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (data.available) {
-                // Dates are available
                 selectedStartDate = data.start_date;
                 selectedEndDate = data.end_date;
-
-                // Update calendar to show selected dates
                 calendar.render();
 
                 showMessage('success', data.message);
                 selectedDates.innerHTML = `
-                    <strong>Selected dates:</strong> ${formatDate(data.start_date)} - ${formatDate(data.end_date)}
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <strong>Selected:</strong> ${formatDate(data.start_date)} - ${formatDate(data.end_date)}
+                    </div>
                 `;
-                bookNowBtn.disabled = false;
-                bookBtnText.textContent = 'Book This Tour';
 
-                // Scroll to result
+                // Enable and style button
+                bookNowBtn.disabled = false;
+                bookNowBtn.className = 'w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 hover:-translate-y-0.5';
+                bookBtnText.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Book This Tour
+                `;
+
                 availabilityResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-                // Update button to proceed to booking
                 bookNowBtn.onclick = function() {
                     @auth
                         @if(auth()->user() && auth()->user()->isTourist())
-                            // Redirect to booking page with plan_id and start_date as query params
                             window.location.href = `/tourist/bookings/create?plan_id={{ $plan->id }}&start_date=${data.start_date}`;
                         @else
-                            // Not a tourist
                             alert('Only tourists can book tours.');
                         @endif
                     @else
-                        // Redirect to login with return URL
                         window.location.href = `{{ route('login') }}?redirect={{ urlencode(route('tour-packages.show', $plan)) }}`;
                     @endauth
                 };
             } else {
-                // Dates are not available
                 selectedStartDate = null;
                 selectedEndDate = null;
                 calendar.render();
@@ -295,24 +311,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 showMessage('error', data.message);
                 selectedDates.innerHTML = '';
                 bookNowBtn.disabled = true;
-                bookBtnText.textContent = 'Select available dates';
+                bookNowBtn.className = 'w-full py-4 bg-slate-200 text-slate-400 font-semibold rounded-xl transition-all duration-300 disabled:cursor-not-allowed';
+                bookBtnText.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Select available dates
+                `;
             }
         } catch (error) {
             console.error('Error checking availability:', error);
             showMessage('error', 'Error checking availability. Please try again.');
             bookNowBtn.disabled = true;
-            bookBtnText.textContent = 'Error - try again';
+            bookNowBtn.className = 'w-full py-4 bg-slate-200 text-slate-400 font-semibold rounded-xl transition-all duration-300 disabled:cursor-not-allowed';
+            bookBtnText.innerHTML = `
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                Error - try again
+            `;
         }
     }
 
     // Show message helper
     function showMessage(type, message) {
         if (type === 'success') {
-            availabilityMessage.className = 'p-4 rounded-lg bg-emerald-100 border border-emerald-300';
-            availabilityMessage.innerHTML = `<p class="text-emerald-800 font-medium">${message}</p>`;
+            availabilityMessage.className = 'p-4 rounded-xl bg-green-50 border border-green-200';
+            availabilityMessage.innerHTML = `
+                <p class="text-green-800 font-medium flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    ${message}
+                </p>
+            `;
         } else {
-            availabilityMessage.className = 'p-4 rounded-lg bg-red-100 border border-red-300';
-            availabilityMessage.innerHTML = `<p class="text-red-800 font-medium">${message}</p>`;
+            availabilityMessage.className = 'p-4 rounded-xl bg-red-50 border border-red-200';
+            availabilityMessage.innerHTML = `
+                <p class="text-red-800 font-medium flex items-center gap-2">
+                    <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    ${message}
+                </p>
+            `;
         }
         availabilityResult.classList.remove('hidden');
     }
@@ -339,113 +381,246 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
-/* Custom calendar styling */
+/* Calendar Container */
 #availability-calendar {
-    font-size: 0.875rem;
+    font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Calendar Header */
+.fc .fc-toolbar {
+    margin-bottom: 1.25rem;
+    gap: 0.75rem;
+}
+
+.fc .fc-toolbar-title {
+    font-family: 'Outfit', system-ui, sans-serif;
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: #1e293b;
+}
+
+/* Navigation Buttons */
+.fc .fc-button-primary {
+    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+    border: none !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3) !important;
+    transition: all 0.2s !important;
+}
+
+.fc .fc-button-primary:hover {
+    background: linear-gradient(135deg, #d97706 0%, #c2410c 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 10px -1px rgba(245, 158, 11, 0.4) !important;
+}
+
+.fc .fc-button-primary:disabled {
+    background: #e2e8f0 !important;
+    box-shadow: none !important;
+    color: #94a3b8 !important;
+}
+
+.fc .fc-button-primary:focus {
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3) !important;
+}
+
+.fc .fc-prev-button,
+.fc .fc-next-button {
+    padding: 0.5rem !important;
+    min-width: 2.5rem !important;
+}
+
+.fc .fc-today-button {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    box-shadow: none !important;
+}
+
+.fc .fc-today-button:hover {
+    background: #e2e8f0 !important;
+    transform: none !important;
+}
+
+/* Day Headers */
+.fc .fc-col-header {
+    background: linear-gradient(to bottom, #fefce8, #fef9c3);
+    border-radius: 0.75rem 0.75rem 0 0;
+    overflow: hidden;
+}
+
+.fc .fc-col-header-cell {
+    padding: 0.75rem 0.5rem !important;
+    font-weight: 600 !important;
+    color: #92400e !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    border: none !important;
+}
+
+/* Day Grid */
+.fc .fc-daygrid-body {
+    border: 1px solid #fde68a;
+    border-radius: 0 0 0.75rem 0.75rem;
+    overflow: hidden;
+}
+
+.fc .fc-daygrid-day {
+    border-color: #fef3c7 !important;
+}
+
+.fc .fc-daygrid-day-frame {
+    min-height: 52px !important;
+    padding: 4px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fc .fc-daygrid-day-number {
+    padding: 0 !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
 }
 
 /* Past dates */
 .fc-day-past {
-    background-color: #f3f4f6 !important;
-    color: #9ca3af !important;
-    cursor: not-allowed !important;
+    background-color: #f8fafc !important;
 }
 
-/* Unavailable dates (outside seasonal range) */
+.fc-day-past .fc-daygrid-day-number {
+    color: #cbd5e1 !important;
+}
+
+/* Unavailable dates */
 .fc-day-unavailable {
-    background-color: #f3f4f6 !important;
-    color: #d1d5db !important;
-    cursor: not-allowed !important;
+    background-color: #f1f5f9 !important;
+}
+
+.fc-day-unavailable .fc-daygrid-day-number {
+    color: #94a3b8 !important;
 }
 
 /* Booked dates */
 .fc-day-booked {
-    background-color: #fee2e2 !important;
-    border: 2px solid #ef4444 !important;
-    color: #991b1b !important;
-    cursor: not-allowed !important;
+    background: linear-gradient(135deg, #fef2f2, #fee2e2) !important;
+    position: relative;
+}
+
+.fc-day-booked::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 2px solid #f87171;
+    border-radius: 0.5rem;
+    pointer-events: none;
+}
+
+.fc-day-booked .fc-daygrid-day-number {
+    color: #dc2626 !important;
+    font-weight: 600 !important;
 }
 
 /* Available dates */
 .fc-day-available {
-    background-color: #ecfdf5 !important;
-    border: 2px solid #10b981 !important;
+    background: linear-gradient(135deg, #fefce8, #fef9c3) !important;
     cursor: pointer !important;
-    transition: all 0.2s;
+    transition: all 0.2s ease !important;
+    position: relative;
+}
+
+.fc-day-available::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 2px solid #f59e0b;
+    border-radius: 0.5rem;
+    pointer-events: none;
+    transition: all 0.2s ease;
 }
 
 .fc-day-available:hover {
-    background-color: #d1fae5 !important;
-    transform: scale(1.05);
-    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+    transform: scale(1.02);
+    z-index: 10;
+    box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.3);
+}
+
+.fc-day-available:hover::after {
+    border-color: #d97706;
+    border-width: 3px;
+}
+
+.fc-day-available .fc-daygrid-day-number {
+    color: #92400e !important;
+    font-weight: 600 !important;
 }
 
 /* Selected dates */
 .fc-day-selected {
-    background-color: #d1fae5 !important;
-    border: 2px solid #059669 !important;
-    color: #065f46 !important;
-    font-weight: 600 !important;
+    background: linear-gradient(135deg, #f59e0b, #ea580c) !important;
+    position: relative;
 }
 
-/* Calendar header styling */
-.fc .fc-toolbar-title {
-    font-size: 1.125rem !important;
-    font-weight: 600 !important;
-    color: #1f2937;
+.fc-day-selected::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 0.5rem;
+    pointer-events: none;
 }
 
-.fc .fc-button {
-    background-color: #10b981 !important;
-    border-color: #10b981 !important;
-    font-size: 0.875rem !important;
-    padding: 0.375rem 0.75rem !important;
-}
-
-.fc .fc-button:hover {
-    background-color: #059669 !important;
-    border-color: #059669 !important;
-}
-
-.fc .fc-button:disabled {
-    background-color: #9ca3af !important;
-    border-color: #9ca3af !important;
-}
-
-/* Day headers */
-.fc .fc-col-header-cell {
-    background-color: #f9fafb;
-    font-weight: 600;
-    color: #374151;
-    padding: 0.5rem;
-}
-
-/* Day cells */
-.fc .fc-daygrid-day-frame {
-    min-height: 50px;
-    padding: 4px;
-}
-
-.fc .fc-daygrid-day-number {
-    padding: 4px;
-    font-weight: 500;
+.fc-day-selected .fc-daygrid-day-number {
+    color: white !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Today's date */
-.fc .fc-day-today {
-    background-color: #fffbeb !important;
+.fc .fc-day-today:not(.fc-day-past) {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7) !important;
 }
 
-/* Remove default today highlight if it's not available */
+.fc .fc-day-today:not(.fc-day-past)::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    background: #f59e0b;
+    border-radius: 50%;
+}
+
 .fc .fc-day-today.fc-day-past {
-    background-color: #f3f4f6 !important;
+    background-color: #f8fafc !important;
+}
+
+/* Scrollbar for calendar */
+.fc-scroller::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fc-scroller::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb {
+    background: #f59e0b;
+    border-radius: 3px;
 }
 
 /* Mobile responsiveness */
 @media (max-width: 640px) {
     .fc .fc-toolbar {
         flex-direction: column;
-        gap: 0.5rem;
+        align-items: stretch;
+        gap: 0.75rem;
     }
 
     .fc .fc-toolbar-chunk {
@@ -453,8 +628,35 @@ document.addEventListener('DOMContentLoaded', function() {
         justify-content: center;
     }
 
-    .fc .fc-daygrid-day-frame {
-        min-height: 40px;
+    .fc .fc-toolbar-chunk:first-child {
+        order: 2;
     }
+
+    .fc .fc-toolbar-chunk:nth-child(2) {
+        order: 1;
+    }
+
+    .fc .fc-daygrid-day-frame {
+        min-height: 44px !important;
+    }
+
+    .fc .fc-col-header-cell {
+        padding: 0.5rem 0.25rem !important;
+        font-size: 0.65rem !important;
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 0.75rem !important;
+    }
+}
+
+/* Animation for selection */
+@keyframes pulse-border {
+    0%, 100% { border-color: #f59e0b; }
+    50% { border-color: #fbbf24; }
+}
+
+.fc-day-selected::after {
+    animation: pulse-border 2s ease-in-out infinite;
 }
 </style>
