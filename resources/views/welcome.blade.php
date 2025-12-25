@@ -470,28 +470,32 @@
                         Let our expert local guides craft your perfect Sri Lankan journey.
                     </p>
 
-                    <!-- CTA Buttons -->
-                    <div class="flex flex-wrap gap-4">
-                        <a href="{{ route('tour-packages.index') }}"
-                           class="magnetic-btn group px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-full inline-flex items-center gap-3">
-                            <span class="relative z-10">Explore Tours</span>
-                            <div class="relative z-10 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    <!-- CTA - Creative Compass Design -->
+                    <a href="{{ route('tour-packages.index') }}" class="group inline-flex items-center gap-6">
+                        <!-- Animated Compass Icon -->
+                        <div class="relative w-20 h-20">
+                            <!-- Outer ring -->
+                            <div class="absolute inset-0 rounded-full border-2 border-amber-400/50 group-hover:border-amber-400 transition-colors duration-500"></div>
+                            <!-- Spinning dashed ring -->
+                            <div class="absolute inset-1 rounded-full border border-dashed border-white/30 group-hover:animate-spin-slow"></div>
+                            <!-- Inner glow -->
+                            <div class="absolute inset-3 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30 group-hover:shadow-amber-500/50 transition-shadow duration-500"></div>
+                            <!-- Compass needle -->
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white transform group-hover:rotate-45 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                 </svg>
                             </div>
-                        </a>
-
-                        <a href="#experiences"
-                           class="group px-8 py-4 border-2 border-white/30 hover:border-amber-400 text-white font-semibold rounded-full inline-flex items-center gap-3 transition-all duration-300 hover:bg-white/10">
-                            <div class="w-10 h-10 border-2 border-white/50 rounded-full flex items-center justify-center group-hover:border-amber-400 group-hover:bg-amber-400/20 transition-all">
-                                <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                            </div>
-                            <span>Watch Video</span>
-                        </a>
-                    </div>
+                        </div>
+                        <!-- Text with animated underline -->
+                        <div class="relative">
+                            <span class="text-2xl font-display font-semibold text-white group-hover:text-amber-400 transition-colors duration-300">
+                                Explore Tours
+                            </span>
+                            <div class="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-orange-500 group-hover:w-full transition-all duration-500"></div>
+                            <span class="block text-sm text-white/50 mt-1 group-hover:text-white/70 transition-colors">Start your journey →</span>
+                        </div>
+                    </a>
 
                     <!-- Stats -->
                     <div class="flex flex-wrap gap-12 mt-16 pt-8 border-t border-white/10">
@@ -848,7 +852,7 @@
                         <div class="rounded-3xl overflow-hidden h-48">
                             <img src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=400&q=80" alt="Travelers" class="w-full h-full object-cover">
                         </div>
-                        <div class="rounded-3xl overflow-hidden h-64 blob-shape">
+                        <div class="rounded-3xl overflow-hidden h-64">
                             <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80" alt="Adventure" class="w-full h-full object-cover">
                         </div>
                     </div>
@@ -886,27 +890,44 @@
 
                 <!-- Features -->
                 <div class="space-y-6">
-                    @php
-                        $features = [
-                            ['icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'title' => 'Verified Local Guides', 'desc' => 'All our guides are background-checked and certified professionals'],
-                            ['icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', 'title' => 'Best Price Guarantee', 'desc' => 'Found it cheaper? We\'ll match the price plus give you 10% off'],
-                            ['icon' => 'M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z', 'title' => '24/7 Support', 'desc' => 'Round-the-clock assistance for a worry-free travel experience'],
-                        ];
-                    @endphp
-
-                    @foreach($features as $feature)
-                        <div class="flex gap-4 group">
-                            <div class="w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500 transition-colors duration-300">
-                                <svg class="w-7 h-7 text-amber-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $feature['icon'] }}"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 class="text-white font-semibold text-lg mb-1">{{ $feature['title'] }}</h4>
-                                <p class="text-white/50">{{ $feature['desc'] }}</p>
-                            </div>
+                    <!-- Verified Local Guides -->
+                    <div class="flex gap-4 group">
+                        <div class="w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500 transition-colors duration-300">
+                            <svg class="w-7 h-7 text-amber-400 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/>
+                            </svg>
                         </div>
-                    @endforeach
+                        <div>
+                            <h4 class="text-white font-semibold text-lg mb-1">Verified Local Guides</h4>
+                            <p class="text-white/50">All our guides are background-checked and certified professionals</p>
+                        </div>
+                    </div>
+
+                    <!-- Best Price Guarantee -->
+                    <div class="flex gap-4 group">
+                        <div class="w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500 transition-colors duration-300">
+                            <svg class="w-7 h-7 text-amber-400 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold text-lg mb-1">Best Price Guarantee</h4>
+                            <p class="text-white/50">Found it cheaper? We'll match the price plus give you 10% off</p>
+                        </div>
+                    </div>
+
+                    <!-- 24/7 Support -->
+                    <div class="flex gap-4 group">
+                        <div class="w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500 transition-colors duration-300">
+                            <svg class="w-7 h-7 text-amber-400 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold text-lg mb-1">24/7 Support</h4>
+                            <p class="text-white/50">Round-the-clock assistance for a worry-free travel experience</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mt-10">
