@@ -732,87 +732,95 @@
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($featuredPackages->take(3) as $index => $plan)
                 <a href="{{ route('tour-packages.show', $plan) }}"
-                   class="premium-card group"
+                   class="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500"
                    data-aos="fade-up"
                    data-aos-delay="{{ $index * 100 }}">
-                    <!-- Image -->
-                    <div class="card-image relative h-72">
+                    <!-- Full Card Image Background -->
+                    <div class="relative h-[420px] overflow-hidden">
                         @if($plan->cover_photo)
-                            <img src="{{ Storage::url($plan->cover_photo) }}" alt="{{ $plan->title }}" class="w-full h-full object-cover">
+                            <img src="{{ Storage::url($plan->cover_photo) }}" alt="{{ $plan->title }}"
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         @else
-                            <div class="w-full h-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-                                <svg class="w-20 h-20 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
+                            <div class="w-full h-full bg-gradient-to-br from-amber-400 via-orange-500 to-amber-600"></div>
                         @endif
 
-                        <!-- Overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <!-- Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
 
-                        <!-- Duration Badge -->
-                        <div class="absolute top-4 left-4 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full flex items-center gap-2 shadow-lg">
-                            <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <span class="text-slate-700 font-semibold text-sm">{{ $plan->num_days }} Days</span>
+                        <!-- Top Tags -->
+                        <div class="absolute top-5 left-5 right-5 flex items-start justify-between">
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-full shadow-lg">
+                                    {{ $plan->num_days }}D / {{ $plan->num_nights ?? $plan->num_days - 1 }}N
+                                </span>
+                                @if($plan->trip_focus_tags && count($plan->trip_focus_tags) > 0)
+                                    <span class="px-3 py-1.5 bg-white/20 backdrop-blur-md text-white text-xs font-medium rounded-full">
+                                        {{ $plan->trip_focus_tags[0] ?? 'Adventure' }}
+                                    </span>
+                                @endif
+                            </div>
+                            <button onclick="event.preventDefault(); event.stopPropagation();"
+                                    class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white hover:text-red-500 text-white transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </button>
                         </div>
 
-                        <!-- Wishlist Button -->
-                        <button class="absolute top-4 right-4 w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50 hover:scale-110">
-                            <svg class="w-5 h-5 text-slate-400 hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Content -->
-                    <div class="p-6">
-                        <!-- Rating & Location -->
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-1">
-                                @for($i = 0; $i < 5; $i++)
-                                    <svg class="w-4 h-4 {{ $i < 4 ? 'text-amber-400' : 'text-slate-200' }} fill-current" viewBox="0 0 20 20">
+                        <!-- Bottom Content -->
+                        <div class="absolute bottom-0 left-0 right-0 p-6">
+                            <!-- Rating -->
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="flex items-center gap-1 px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-full">
+                                    <svg class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 20 20">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                     </svg>
-                                @endfor
-                                <span class="text-slate-500 text-sm ml-1">({{ rand(15, 99) }})</span>
+                                    <span class="text-white text-sm font-semibold">{{ number_format($plan->guide->average_rating ?? 4.8, 1) }}</span>
+                                </div>
+                                <span class="text-white/70 text-sm">({{ $plan->booking_count ?? rand(20, 150) }} reviews)</span>
                             </div>
-                            <div class="flex items-center gap-1 text-slate-400">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+
+                            <!-- Title -->
+                            <h3 class="font-display text-2xl font-bold text-white mb-3 leading-tight group-hover:text-amber-400 transition-colors">
+                                {{ $plan->title }}
+                            </h3>
+
+                            <!-- Location -->
+                            <div class="flex items-center gap-2 text-white/80 mb-4">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                 </svg>
-                                <span class="text-sm">Sri Lanka</span>
+                                <span class="text-sm">{{ is_array($plan->destinations) ? implode(', ', array_slice($plan->destinations, 0, 2)) : 'Sri Lanka' }}</span>
                             </div>
-                        </div>
 
-                        <!-- Title -->
-                        <h3 class="font-display text-xl font-bold text-slate-900 mb-3 group-hover:text-amber-600 transition-colors line-clamp-2">
-                            {{ $plan->title }}
-                        </h3>
-
-                        <!-- Guide Info -->
-                        <div class="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-semibold">
-                                {{ strtoupper(substr($plan->guide->full_name ?? 'G', 0, 1)) }}
-                            </div>
-                            <div>
-                                <div class="text-sm font-medium text-slate-700">{{ $plan->guide->full_name ?? 'Expert Guide' }}</div>
-                                <div class="text-xs text-slate-400">Local Expert</div>
-                            </div>
-                        </div>
-
-                        <!-- Price & CTA -->
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-slate-400 text-sm">From</span>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="text-2xl font-bold text-slate-900">${{ number_format($plan->price_per_adult) }}</span>
-                                    <span class="text-slate-400 text-sm">/person</span>
+                            <!-- Price & Guide Row -->
+                            <div class="flex items-center justify-between pt-4 border-t border-white/20">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm ring-2 ring-white/30 overflow-hidden">
+                                        @if($plan->guide && $plan->guide->profile_photo)
+                                            <img src="{{ Storage::url($plan->guide->profile_photo) }}" alt="{{ $plan->guide->full_name }}" class="w-full h-full object-cover">
+                                        @else
+                                            {{ strtoupper(substr($plan->guide->full_name ?? 'G', 0, 1)) }}
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-medium text-sm">{{ Str::limit($plan->guide->full_name ?? 'Expert Guide', 15) }}</div>
+                                        <div class="text-white/60 text-xs">Local Guide</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-white/60 text-xs">From</div>
+                                    <div class="text-2xl font-bold text-white">${{ number_format($plan->price_per_adult) }}</div>
                                 </div>
                             </div>
-                            <div class="px-5 py-2.5 bg-slate-900 hover:bg-amber-500 text-white rounded-full font-medium text-sm transition-colors group-hover:shadow-lg">
-                                View Details
+                        </div>
+
+                        <!-- Hover Effect Arrow -->
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
                             </div>
                         </div>
                     </div>
