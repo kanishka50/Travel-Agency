@@ -12,9 +12,9 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
                 display: ['Outfit', 'system-ui', 'sans-serif'],
-                body: ['Inter', 'system-ui', 'sans-serif'],
+                body: ['DM Sans', 'system-ui', 'sans-serif'],
             },
             colors: {
                 // Bee/Honey inspired color palette
