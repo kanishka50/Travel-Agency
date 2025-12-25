@@ -1,35 +1,55 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8">
+<div class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Back Button -->
-        <div class="mb-6">
-            <a href="{{ route('guide.payments.index') }}" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to Payments
-            </a>
-        </div>
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-6" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{{ route('guide.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-emerald-600">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <a href="{{ route('guide.payments.index') }}" class="ml-1 text-sm font-medium text-gray-500 hover:text-emerald-600 md:ml-2">My Payments</a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-emerald-600 md:ml-2">Booking #{{ $payment->booking->booking_number }}</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
 
         <!-- Header -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 text-white">
+            <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-8 text-white">
                 <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-3xl font-bold">Payment Details</h1>
-                        <p class="mt-2 text-blue-100">Booking #{{ $payment->booking->booking_number }}</p>
+                        <p class="mt-2 text-emerald-100">Booking #{{ $payment->booking->booking_number }}</p>
                     </div>
                     @if($payment->isFullyPaid())
-                        <div class="flex items-center bg-green-500 px-4 py-2 rounded-lg">
+                        <div class="flex items-center bg-teal-500 px-4 py-2 rounded-lg">
                             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
                             <span class="font-bold">Fully Paid</span>
                         </div>
                     @else
-                        <div class="flex items-center bg-orange-500 px-4 py-2 rounded-lg">
+                        <div class="flex items-center bg-amber-500 px-4 py-2 rounded-lg">
                             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                             </svg>
@@ -72,44 +92,44 @@
             <div class="px-6 py-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4">Payment Summary</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-blue-50 rounded-lg p-4">
+                    <div class="bg-emerald-50 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-2">
-                            <p class="text-sm text-blue-600 font-medium">Total Owed</p>
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <p class="text-sm text-emerald-600 font-medium">Total Owed</p>
+                            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <p class="text-2xl font-bold text-blue-700">${{ number_format($payment->guide_payout, 2) }}</p>
-                        <p class="text-xs text-blue-600 mt-1">Your earnings for this booking</p>
+                        <p class="text-2xl font-bold text-emerald-700">${{ number_format($payment->guide_payout, 2) }}</p>
+                        <p class="text-xs text-emerald-600 mt-1">Your earnings for this booking</p>
                     </div>
 
-                    <div class="bg-green-50 rounded-lg p-4">
+                    <div class="bg-teal-50 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-2">
-                            <p class="text-sm text-green-600 font-medium">Amount Received</p>
-                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <p class="text-sm text-teal-600 font-medium">Amount Received</p>
+                            <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <p class="text-2xl font-bold text-green-700">${{ number_format($payment->amount_paid, 2) }}</p>
+                        <p class="text-2xl font-bold text-teal-700">${{ number_format($payment->amount_paid, 2) }}</p>
                         <div class="flex items-center mt-1">
-                            <div class="flex-1 bg-green-200 rounded-full h-2 mr-2">
-                                <div class="bg-green-600 h-2 rounded-full" style="width: {{ $payment->payment_progress }}%"></div>
+                            <div class="flex-1 bg-teal-200 rounded-full h-2 mr-2">
+                                <div class="bg-teal-600 h-2 rounded-full" style="width: {{ $payment->payment_progress }}%"></div>
                             </div>
-                            <span class="text-xs text-green-600 font-medium">{{ $payment->payment_progress }}%</span>
+                            <span class="text-xs text-teal-600 font-medium">{{ $payment->payment_progress }}%</span>
                         </div>
                     </div>
 
-                    <div class="bg-orange-50 rounded-lg p-4">
+                    <div class="bg-amber-50 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-2">
-                            <p class="text-sm text-orange-600 font-medium">Amount Remaining</p>
-                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <p class="text-sm text-amber-600 font-medium">Amount Remaining</p>
+                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <p class="text-2xl font-bold {{ $payment->amount_remaining > 0 ? 'text-orange-700' : 'text-gray-400' }}">
+                        <p class="text-2xl font-bold {{ $payment->amount_remaining > 0 ? 'text-amber-700' : 'text-gray-400' }}">
                             ${{ number_format($payment->amount_remaining, 2) }}
                         </p>
-                        <p class="text-xs text-orange-600 mt-1">{{ $payment->amount_remaining > 0 ? 'Awaiting payment' : 'All paid' }}</p>
+                        <p class="text-xs text-amber-600 mt-1">{{ $payment->amount_remaining > 0 ? 'Awaiting payment' : 'All paid' }}</p>
                     </div>
                 </div>
 
@@ -128,7 +148,7 @@
                             </div>
                             <div>
                                 <p class="text-gray-500">Your Share (90%)</p>
-                                <p class="font-bold text-green-600">${{ number_format($payment->guide_payout, 2) }}</p>
+                                <p class="font-bold text-emerald-600">${{ number_format($payment->guide_payout, 2) }}</p>
                             </div>
                         </div>
                     </div>
@@ -141,7 +161,7 @@
             <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-bold text-gray-900">Payment Transaction History</h2>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
                         {{ $payment->transactions->count() }} {{ $payment->transactions->count() === 1 ? 'Transaction' : 'Transactions' }}
                     </span>
                 </div>
@@ -154,8 +174,8 @@
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
                                     <div class="flex items-center mb-2">
-                                        <div class="flex items-center justify-center w-10 h-10 bg-green-100 rounded-full mr-4">
-                                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="flex items-center justify-center w-10 h-10 bg-emerald-100 rounded-full mr-4">
+                                            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
                                         </div>
@@ -164,7 +184,7 @@
                                                 <h3 class="text-lg font-bold text-gray-900">
                                                     ${{ number_format($transaction->amount, 2) }}
                                                 </h3>
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
                                                     {{ ucwords(str_replace('_', ' ', $transaction->payment_method)) }}
                                                 </span>
                                             </div>
@@ -228,16 +248,16 @@
 
         <!-- Help Section -->
         @if($payment->amount_remaining > 0)
-            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4">
                 <div class="flex">
                     <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="h-5 w-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                         </svg>
                     </div>
                     <div class="ml-3">
-                        <h3 class="text-sm font-medium text-blue-800">Payment Information</h3>
-                        <div class="mt-2 text-sm text-blue-700">
+                        <h3 class="text-sm font-medium text-emerald-800">Payment Information</h3>
+                        <div class="mt-2 text-sm text-emerald-700">
                             <p>Payments are processed by the platform admin. If you have questions about your payment schedule, please contact support.</p>
                         </div>
                     </div>

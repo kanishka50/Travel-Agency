@@ -28,7 +28,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Redirect all users (tourists and guides) to home page after login
+        // They can access their dashboard via the profile dropdown
+        return redirect()->intended(route('welcome', absolute: false));
     }
 
     /**

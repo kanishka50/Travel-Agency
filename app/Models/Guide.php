@@ -8,10 +8,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Guide extends Model
 {
+    public const GUIDE_TYPES = [
+        'chauffeur_guide' => 'Chauffeur Guide',
+        'national_guide' => 'National Guide',
+        'area_guide' => 'Area Guide',
+        'site_guide' => 'Site Guide',
+        'tourist_driver' => 'Tourist Driver',
+        'wildlife_tracker' => 'Wildlife Tracker',
+        'trekking_guide' => 'Trekking Guide',
+        'not_specified' => 'Not Specified',
+    ];
+
     protected $fillable = [
         'user_id',
         'guide_id_number',
         'full_name',
+        'guide_type',
         'phone',
         'national_id',
         'bio',
@@ -25,8 +37,6 @@ class Guide extends Model
         'total_bookings',
         'license_number',
         'license_expiry',
-        'vehicle_type',
-        'vehicle_registration',
         'insurance_policy_number',
         'insurance_expiry',
         'emergency_contact_name',
@@ -35,6 +45,7 @@ class Guide extends Model
         'bank_account_number',
         'bank_account_holder',
         'commission_rate',
+        'admin_notes',
     ];
 
     protected $casts = [
@@ -71,5 +82,21 @@ class Guide extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function vehicles(): HasMany
+    {
+        return $this->hasMany(Vehicle::class);
+    }
+
+    public function activeVehicles(): HasMany
+    {
+        return $this->hasMany(Vehicle::class)->where('is_active', true);
+    }
+
+    // Helper to get guide type display label
+    public function getGuideTypeLabelAttribute(): string
+    {
+        return self::GUIDE_TYPES[$this->guide_type] ?? 'Not Specified';
     }
 }

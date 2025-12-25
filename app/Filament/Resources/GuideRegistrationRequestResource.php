@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\GuideRegistrationRequestResource\Pages;
+use App\Models\Guide;
 use App\Models\GuideRegistrationRequest;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -79,6 +80,13 @@ class GuideRegistrationRequestResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
+
+                Tables\Columns\TextColumn::make('guide_type')
+                    ->label('Guide Type')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => Guide::GUIDE_TYPES[$state] ?? 'Not Specified')
+                    ->color('info')
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
@@ -234,6 +242,13 @@ class GuideRegistrationRequestResource extends Resource
                             ->icon('heroicon-o-user')
                             ->weight('bold'),
 
+                        Infolists\Components\TextEntry::make('guide_type')
+                            ->label('Guide Type')
+                            ->badge()
+                            ->formatStateUsing(fn ($state) => Guide::GUIDE_TYPES[$state] ?? 'Not Specified')
+                            ->color('info')
+                            ->icon('heroicon-o-identification'),
+
                         Infolists\Components\TextEntry::make('email')
                             ->label('Email')
                             ->icon('heroicon-o-envelope')
@@ -304,29 +319,15 @@ class GuideRegistrationRequestResource extends Resource
                             ->icon('heroicon-o-document')
                             ->color('primary'),
 
-                        Infolists\Components\TextEntry::make('vehicle_license')
-                            ->label('Vehicle License')
-                            ->formatStateUsing(fn ($state) => $state ? 'View Document' : 'Not uploaded')
-                            ->url(fn ($record) => $record->vehicle_license ? Storage::disk('public')->url($record->vehicle_license) : null)
-                            ->openUrlInNewTab()
-                            ->icon('heroicon-o-document')
-                            ->color('primary'),
-
                         Infolists\Components\TextEntry::make('language_certificates')
                             ->label('Language Certificates')
                             ->formatStateUsing(fn ($state) => $state && is_array($state) ? count($state) . ' file(s) uploaded' : 'Not uploaded')
                             ->icon('heroicon-o-document-text')
                             ->color('info')
                             ->columnSpanFull(),
-
-                        Infolists\Components\TextEntry::make('vehicle_photos')
-                            ->label('Vehicle Photos')
-                            ->formatStateUsing(fn ($state) => $state && is_array($state) ? count($state) . ' photo(s) uploaded' : 'Not uploaded')
-                            ->icon('heroicon-o-photo')
-                            ->color('info')
-                            ->columnSpanFull(),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->description('Note: Vehicle information can be added by guides from their dashboard after approval.'),
 
                 Infolists\Components\Section::make('Review Information')
                     ->schema([

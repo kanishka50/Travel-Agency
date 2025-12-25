@@ -336,7 +336,7 @@
             <strong>Selected Add-ons:</strong>
             <ul style="margin-left: 20px; margin-top: 5px;">
                 @foreach($booking->addons as $addon)
-                <li>{{ $addon->addon_name }} (x{{ $addon->quantity }}) - ${{ number_format($addon->total_price, 2) }}</li>
+                <li>{{ $addon->addon_name }} ({{ $addon->num_participants }} {{ Str::plural('person', $addon->num_participants) }}) - ${{ number_format($addon->total_price, 2) }}</li>
                 @endforeach
             </ul>
         </div>

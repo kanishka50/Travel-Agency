@@ -9,49 +9,49 @@
 
     <!-- Earnings & Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white">
+        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-lg shadow-lg text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-blue-100 text-sm font-semibold">Total Bookings</p>
+                    <p class="text-emerald-100 text-sm font-semibold">Total Bookings</p>
                     <p class="text-3xl font-bold mt-2">{{ $totalBookings }}</p>
                 </div>
-                <svg class="w-12 h-12 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                 </svg>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 p-6 rounded-lg shadow-lg text-white">
+        <div class="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-lg shadow-lg text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-yellow-100 text-sm font-semibold">Pending Payment</p>
+                    <p class="text-amber-100 text-sm font-semibold">Pending Payment</p>
                     <p class="text-3xl font-bold mt-2">{{ $pendingPayment }}</p>
                 </div>
-                <svg class="w-12 h-12 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-lg shadow-lg text-white">
+        <div class="bg-gradient-to-br from-teal-500 to-teal-600 p-6 rounded-lg shadow-lg text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-green-100 text-sm font-semibold">Total Earnings</p>
+                    <p class="text-teal-100 text-sm font-semibold">Total Earnings</p>
                     <p class="text-3xl font-bold mt-2">${{ number_format($totalEarnings, 0) }}</p>
                 </div>
-                <svg class="w-12 h-12 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-lg shadow-lg text-white">
+        <div class="bg-gradient-to-br from-cyan-500 to-cyan-600 p-6 rounded-lg shadow-lg text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-purple-100 text-sm font-semibold">This Month</p>
+                    <p class="text-cyan-100 text-sm font-semibold">This Month</p>
                     <p class="text-3xl font-bold mt-2">${{ number_format($thisMonthEarnings, 0) }}</p>
                 </div>
-                <svg class="w-12 h-12 text-purple-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                 </svg>
             </div>
@@ -70,7 +70,7 @@
             <div class="bg-white rounded-lg shadow-sm p-6 mt-6">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold text-gray-900">Upcoming Bookings</h2>
-                    <a href="{{ route('guide.bookings') }}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">View All</a>
+                    <a href="{{ route('guide.bookings') }}" class="text-emerald-600 hover:text-emerald-800 text-sm font-semibold">View All</a>
                 </div>
 
                 @if($upcomingBookings->isEmpty())
@@ -89,7 +89,7 @@
                                         <h3 class="font-semibold text-gray-900">
                                             @if($booking->booking_type === 'custom_request' && $booking->touristRequest)
                                                 {{ $booking->touristRequest->title }}
-                                                <span class="ml-2 px-2 py-0.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded">Custom</span>
+                                                <span class="ml-2 px-2 py-0.5 bg-cyan-100 text-cyan-800 text-xs font-semibold rounded">Custom</span>
                                             @elseif($booking->guidePlan)
                                                 {{ $booking->guidePlan->title }}
                                             @else
@@ -104,14 +104,14 @@
                                             @if($booking->num_children > 0)
                                                 <span>{{ $booking->num_children }} {{ Str::plural('Child', $booking->num_children) }}</span>
                                             @endif
-                                            <span class="font-semibold text-green-600">${{ number_format($booking->guide_payout, 2) }}</span>
+                                            <span class="font-semibold text-emerald-600">${{ number_format($booking->guide_payout, 2) }}</span>
                                         </div>
                                     </div>
                                     <div class="ml-4">
                                         @php
                                             $statusColors = [
-                                                'pending_payment' => 'bg-yellow-100 text-yellow-800',
-                                                'confirmed' => 'bg-green-100 text-green-800',
+                                                'pending_payment' => 'bg-amber-100 text-amber-800',
+                                                'confirmed' => 'bg-emerald-100 text-emerald-800',
                                             ];
                                             $statusColor = $statusColors[$booking->status] ?? 'bg-gray-100 text-gray-800';
                                         @endphp
@@ -121,7 +121,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-3 flex items-center space-x-3">
-                                    <a href="{{ route('guide.bookings.show', $booking->id) }}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">View Details</a>
+                                    <a href="{{ route('guide.bookings.show', $booking->id) }}" class="text-emerald-600 hover:text-emerald-800 text-sm font-semibold">View Details</a>
                                 </div>
                             </div>
                         @endforeach
@@ -136,46 +136,91 @@
             <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
                 <div class="space-y-2">
-                    <a href="{{ route('guide.plans.create') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                        <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('guide.plans.create') }}" class="flex items-center p-3 rounded-lg hover:bg-emerald-50 transition-colors group">
+                        <svg class="w-5 h-5 text-emerald-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        <span class="text-gray-700 font-medium">Create New Plan</span>
+                        <span class="text-gray-700 font-medium group-hover:text-emerald-600">Create New Plan</span>
                     </a>
-                    <a href="{{ route('guide.plans.index') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                        <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('guide.plans.index') }}" class="flex items-center p-3 rounded-lg hover:bg-emerald-50 transition-colors group">
+                        <svg class="w-5 h-5 text-emerald-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                        <span class="text-gray-700 font-medium">Manage Plans</span>
+                        <span class="text-gray-700 font-medium group-hover:text-emerald-600">Manage Plans</span>
                     </a>
-                    <a href="{{ route('guide.bookings') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                        <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('guide.bookings') }}" class="flex items-center p-3 rounded-lg hover:bg-teal-50 transition-colors group">
+                        <svg class="w-5 h-5 text-teal-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span class="text-gray-700 font-medium">View All Bookings</span>
+                        <span class="text-gray-700 font-medium group-hover:text-teal-600">View All Bookings</span>
                     </a>
-                    <a href="{{ route('guide.proposals.index') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                        <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('guide.proposals.index') }}" class="flex items-center p-3 rounded-lg hover:bg-teal-50 transition-colors group">
+                        <svg class="w-5 h-5 text-teal-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                         </svg>
-                        <span class="text-gray-700 font-medium">View Proposals</span>
+                        <span class="text-gray-700 font-medium group-hover:text-teal-600">View Proposals</span>
                         @if(isset($pendingProposals) && $pendingProposals > 0)
-                            <span class="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingProposals }}</span>
+                            <span class="ml-auto bg-teal-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingProposals }}</span>
                         @endif
+                    </a>
+                    <a href="{{ route('guide.requests.index') }}" class="flex items-center p-3 rounded-lg hover:bg-indigo-50 transition-colors group">
+                        <svg class="w-5 h-5 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/>
+                        </svg>
+                        <span class="text-gray-700 font-medium group-hover:text-indigo-600">Browse Tour Requests</span>
+                        @if(isset($openTourRequests) && $openTourRequests > 0)
+                            <span class="ml-auto bg-indigo-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $openTourRequests }}</span>
+                        @endif
+                    </a>
+                    <a href="{{ route('guide.vehicles.index') }}" class="flex items-center p-3 rounded-lg hover:bg-cyan-50 transition-colors group">
+                        <svg class="w-5 h-5 text-cyan-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                        </svg>
+                        <span class="text-gray-700 font-medium group-hover:text-cyan-600">My Vehicles</span>
                     </a>
                 </div>
             </div>
 
+            <!-- My Recent Bids -->
+            @if(isset($recentBids) && $recentBids->isNotEmpty())
+                <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-6 mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-lg font-semibold text-indigo-900">My Recent Bids</h3>
+                        <a href="{{ route('guide.requests.index') }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold">View All</a>
+                    </div>
+                    @foreach($recentBids as $bid)
+                        <div class="bg-white rounded-lg p-4 mb-3 shadow-sm">
+                            <h4 class="font-semibold text-gray-900 text-sm">{{ $bid->touristRequest->title ?? 'Tour Request' }}</h4>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-sm text-gray-600">${{ number_format($bid->total_price, 2) }}</span>
+                                @php
+                                    $bidStatusColors = [
+                                        'pending' => 'bg-amber-100 text-amber-800',
+                                        'accepted' => 'bg-emerald-100 text-emerald-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                    ];
+                                    $bidStatusColor = $bidStatusColors[$bid->status] ?? 'bg-gray-100 text-gray-800';
+                                @endphp
+                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $bidStatusColor }}">
+                                    {{ ucfirst($bid->status) }}
+                                </span>
+                            </div>
+                            <a href="{{ route('guide.requests.show', $bid->tourist_request_id) }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold mt-2 inline-block">View Request →</a>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             <!-- Ongoing Tours -->
             @if($ongoingBookings->isNotEmpty())
-                <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-purple-900 mb-3">Ongoing Tours</h3>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-emerald-900 mb-3">Ongoing Tours</h3>
                     @foreach($ongoingBookings as $booking)
                         <div class="bg-white rounded-lg p-4 mb-3 shadow-sm">
                             <h4 class="font-semibold text-gray-900">
                                 @if($booking->booking_type === 'custom_request' && $booking->touristRequest)
                                     {{ $booking->touristRequest->title }}
-                                    <span class="ml-1 px-1.5 py-0.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded">Custom</span>
+                                    <span class="ml-1 px-1.5 py-0.5 bg-cyan-100 text-cyan-800 text-xs font-semibold rounded">Custom</span>
                                 @elseif($booking->guidePlan)
                                     {{ $booking->guidePlan->title }}
                                 @else
@@ -183,7 +228,7 @@
                                 @endif
                             </h4>
                             <p class="text-sm text-gray-600 mt-1">Ends: {{ $booking->end_date->format('M d, Y') }}</p>
-                            <a href="{{ route('guide.bookings.show', $booking->id) }}" class="text-purple-600 hover:text-purple-800 text-sm font-semibold mt-2 inline-block">View Details →</a>
+                            <a href="{{ route('guide.bookings.show', $booking->id) }}" class="text-emerald-600 hover:text-emerald-800 text-sm font-semibold mt-2 inline-block">View Details →</a>
                         </div>
                     @endforeach
                 </div>

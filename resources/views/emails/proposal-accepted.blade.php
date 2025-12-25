@@ -25,7 +25,7 @@ A booking has been automatically created for you. Here are the details:
 {{ $proposal->modifications }}
 @endif
 
-<x-mail::button :url="route('bookings.show', $booking->id)">
+<x-mail::button :url="route('tourist.bookings.show', $booking->id)">
 View Booking & Pay
 </x-mail::button>
 

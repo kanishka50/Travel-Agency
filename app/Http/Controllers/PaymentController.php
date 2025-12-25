@@ -44,35 +44,28 @@ class PaymentController extends Controller
                 $productName = 'Tour Booking #' . $booking->booking_number;
             }
 
+            // Build description including add-ons if any
+            $description = "Tour booking from {$booking->start_date->format('M d, Y')} to {$booking->end_date->format('M d, Y')}";
+            if ($booking->addons->count() > 0) {
+                $addonNames = $booking->addons->pluck('addon_name')->join(', ');
+                $description .= " | Add-ons: {$addonNames}";
+            }
+
             // Create line items for the checkout
+            // Note: total_amount already includes base price + add-ons + platform fee
             $lineItems = [
                 [
                     'price_data' => [
                         'currency' => 'usd',
                         'product_data' => [
                             'name' => $productName,
-                            'description' => "Tour booking from {$booking->start_date->format('M d, Y')} to {$booking->end_date->format('M d, Y')}",
+                            'description' => $description,
                         ],
                         'unit_amount' => intval($booking->total_amount * 100), // Convert to cents
                     ],
                     'quantity' => 1,
                 ],
             ];
-
-            // Add add-ons to line items (only for guide plan bookings)
-            foreach ($booking->addons as $addon) {
-                $lineItems[] = [
-                    'price_data' => [
-                        'currency' => 'usd',
-                        'product_data' => [
-                            'name' => $addon->addon_name,
-                            'description' => "Add-on for {$productName}",
-                        ],
-                        'unit_amount' => intval($addon->total_price * 100), // Convert to cents
-                    ],
-                    'quantity' => 1,
-                ];
-            }
 
             // Create Stripe Checkout Session
             $checkoutSession = Session::create([
@@ -117,8 +110,75 @@ class PaymentController extends Controller
                 ->with('error', 'Payment verification failed.');
         }
 
-        // The actual payment confirmation will be handled by the webhook
-        // This is just to show a success page to the user
+        // Verify the session with Stripe and confirm payment directly
+        // This handles cases where webhook is delayed or not configured
+        try {
+            Stripe::setApiKey(config('services.stripe.secret'));
+            $session = Session::retrieve($sessionId);
+
+            // If payment is complete but booking not yet updated (webhook delay), update it now
+            // Also handle payment_failed status in case user retried payment
+            if ($session->payment_status === 'paid' && in_array($booking->status, ['pending_payment', 'payment_failed'])) {
+                \Log::info('Payment success: Confirming payment directly (webhook may be delayed)', [
+                    'booking_id' => $booking->id,
+                    'session_id' => $sessionId,
+                ]);
+
+                $booking->update([
+                    'status' => 'confirmed',
+                    'stripe_payment_id' => $session->payment_intent,
+                    'paid_at' => now(),
+                ]);
+
+                // Create booking payment record if it doesn't exist
+                if (!$booking->payment()->exists()) {
+                    BookingPayment::create([
+                        'booking_id' => $booking->id,
+                        'total_amount' => $booking->total_amount,
+                        'platform_fee' => $booking->platform_fee,
+                        'guide_payout' => $booking->guide_payout,
+                        'guide_paid' => false,
+                    ]);
+                }
+
+                // Regenerate PDF with full contact details
+                try {
+                    $pdfService = new BookingPdfService();
+                    $pdfService->regeneratePdfAfterPayment($booking);
+                } catch (\Exception $e) {
+                    \Log::error('Payment success: Failed to regenerate PDF', [
+                        'booking_id' => $booking->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+
+                // Send confirmation emails
+                try {
+                    $booking->load(['tourist.user', 'guide.user', 'guidePlan', 'touristRequest', 'acceptedBid', 'addons']);
+                    Mail::to($booking->tourist->user->email)->send(new BookingConfirmed($booking));
+                    Mail::to($booking->guide->user->email)->send(new GuideNewBooking($booking));
+                } catch (\Exception $e) {
+                    \Log::error('Payment success: Failed to send emails', [
+                        'booking_id' => $booking->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+
+                // Refresh booking to get updated status
+                $booking->refresh();
+            }
+        } catch (\Exception $e) {
+            \Log::error('Payment success: Failed to verify Stripe session', [
+                'booking_id' => $booking->id,
+                'session_id' => $sessionId,
+                'error' => $e->getMessage(),
+            ]);
+            // Continue anyway - the webhook might still handle it
+        }
+
+        // Load relationships needed for the view
+        $booking->load(['guidePlan', 'touristRequest', 'tourist.user', 'guide.user']);
+
         return view('payment.success', compact('booking'));
     }
 

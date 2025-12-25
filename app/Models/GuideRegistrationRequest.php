@@ -9,6 +9,7 @@ class GuideRegistrationRequest extends Model
 {
     protected $fillable = [
         'full_name',
+        'guide_type',
         'email',
         'phone',
         'national_id',
@@ -19,15 +20,13 @@ class GuideRegistrationRequest extends Model
         'experience_description',
         'profile_photo',
         'status',
-        
+
         // Document fields (stored in same table)
         'national_id_document',
         'driving_license',
         'guide_certificate',
         'language_certificates',
-        'vehicle_photos',
-        'vehicle_license',
-        
+
         // Admin fields
         'admin_notes',
         'interview_date',
@@ -39,8 +38,7 @@ class GuideRegistrationRequest extends Model
         'languages' => 'array',
         'expertise_areas' => 'array',
         'regions_can_guide' => 'array',
-        'language_certificates' => 'array', // JSON column
-        'vehicle_photos' => 'array', // JSON column
+        'language_certificates' => 'array',
         'interview_date' => 'date',
         'reviewed_at' => 'datetime',
     ];
@@ -104,16 +102,14 @@ class GuideRegistrationRequest extends Model
     // Helper to get guide certificate URL
     public function getGuideCertificateUrlAttribute(): ?string
     {
-        return $this->guide_certificate 
-            ? asset('storage/' . $this->guide_certificate) 
+        return $this->guide_certificate
+            ? asset('storage/' . $this->guide_certificate)
             : null;
     }
 
-    // Helper to get vehicle license URL
-    public function getVehicleLicenseUrlAttribute(): ?string
+    // Helper to get guide type display label
+    public function getGuideTypeLabelAttribute(): string
     {
-        return $this->vehicle_license 
-            ? asset('storage/' . $this->vehicle_license) 
-            : null;
+        return \App\Models\Guide::GUIDE_TYPES[$this->guide_type] ?? 'Not Specified';
     }
 }

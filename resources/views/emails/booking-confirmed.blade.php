@@ -42,7 +42,7 @@ Your guide will contact you soon to coordinate final details for your tour.
 {{ $booking->tourist_notes }}
 @endif
 
-<x-mail::button :url="route('bookings.show', $booking->id)">
+<x-mail::button :url="route('tourist.bookings.show', $booking->id)">
 View Booking Details
 </x-mail::button>
 

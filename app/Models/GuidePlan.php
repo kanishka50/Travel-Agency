@@ -26,13 +26,11 @@ class GuidePlan extends Model
         'available_start_date',
         'available_end_date',
         'vehicle_type',
-        'vehicle_category',
         'vehicle_capacity',
         'vehicle_ac',
         'vehicle_description',
         'dietary_options',
         'accessibility_info',
-        'cancellation_policy',
         'inclusions',
         'exclusions',
         'cover_photo',
@@ -64,12 +62,12 @@ class GuidePlan extends Model
 
     public function bookings(): HasMany
     {
-        return $this->hasMany(Booking::class, 'plan_id');
+        return $this->hasMany(Booking::class, 'guide_plan_id');
     }
 
-    public function reviews(): HasMany
+    public function reviews(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
-        return $this->hasMany(Review::class, 'plan_id');
+        return $this->hasManyThrough(Review::class, Booking::class, 'guide_plan_id', 'booking_id');
     }
 
     public function proposals(): HasMany
@@ -80,6 +78,51 @@ class GuidePlan extends Model
     public function pendingProposals(): HasMany
     {
         return $this->hasMany(PlanProposal::class)->where('status', 'pending');
+    }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(GuidePlanPhoto::class)->orderBy('display_order');
+    }
+
+    public function itineraries(): HasMany
+    {
+        return $this->hasMany(GuidePlanItinerary::class)->orderBy('day_number');
+    }
+
+    public function addons(): HasMany
+    {
+        return $this->hasMany(GuidePlanAddon::class)->orderBy('day_number');
+    }
+
+    /**
+     * Get all photos including cover photo as the first item
+     */
+    public function getAllPhotosAttribute(): \Illuminate\Support\Collection
+    {
+        $photos = collect();
+
+        // Add cover photo first if exists
+        if ($this->cover_photo) {
+            $photos->push((object)[
+                'id' => null,
+                'photo_path' => $this->cover_photo,
+                'url' => asset('storage/' . $this->cover_photo),
+                'is_cover' => true,
+            ]);
+        }
+
+        // Add gallery photos
+        foreach ($this->photos as $photo) {
+            $photos->push((object)[
+                'id' => $photo->id,
+                'photo_path' => $photo->photo_path,
+                'url' => $photo->url,
+                'is_cover' => false,
+            ]);
+        }
+
+        return $photos;
     }
 
     // Helper methods

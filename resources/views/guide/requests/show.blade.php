@@ -190,7 +190,7 @@
 
                             @if($bid->status === 'pending')
                             <div class="mt-3">
-                                <form action="{{ route('guide.bids.withdraw', $bid) }}" method="POST" onsubmit="return confirm('Are you sure you want to withdraw this proposal?')">
+                                <form action="{{ route('guide.request-proposals.withdraw', $bid) }}" method="POST" onsubmit="return confirm('Are you sure you want to withdraw this proposal?')">
                                     @csrf
                                     <button type="submit" class="w-full px-3 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 text-sm font-medium">
                                         Withdraw Proposal
@@ -219,7 +219,7 @@
                                 You have submitted {{ $bidCount }} {{ Str::plural('proposal', $bidCount) }}. You can submit {{ 2 - $bidCount }} more.
                             @endif
                         </p>
-                        <a href="{{ route('guide.bids.create', $touristRequest) }}" class="block w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 text-center font-semibold shadow-md hover:shadow-lg transition-all">
+                        <a href="{{ route('guide.request-proposals.create', $touristRequest) }}" class="block w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 text-center font-semibold shadow-md hover:shadow-lg transition-all">
                             Submit {{ $bidCount === 0 ? 'First' : 'Second' }} Proposal
                         </a>
                     </div>

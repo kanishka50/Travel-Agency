@@ -32,7 +32,7 @@ If you haven't already, please contact them at {{ $booking->guide->phone }} to c
 - Carry the guide's phone number: {{ $booking->guide->phone }}
 - Have emergency contact numbers saved
 
-<x-mail::button :url="route('bookings.show', $booking->id)">
+<x-mail::button :url="route('tourist.bookings.show', $booking->id)">
 View Booking Agreement
 </x-mail::button>
 

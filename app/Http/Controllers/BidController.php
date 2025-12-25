@@ -36,7 +36,7 @@ class BidController extends Controller
         // Load relationships
         $bid->load(['guide.user']);
 
-        return view('tourist-requests.bids.show', compact('touristRequest', 'bid'));
+        return view('tourist.requests.bids.show', compact('touristRequest', 'bid'));
     }
 
     /**
@@ -179,7 +179,7 @@ class BidController extends Controller
             }
 
             // Redirect to booking page for payment
-            return redirect()->route('bookings.show', $booking->id)
+            return redirect()->route('tourist.bookings.show', $booking->id)
                 ->with('success', 'Proposal accepted! Your booking has been created. Please complete payment to confirm.');
 
         } catch (\Exception $e) {
@@ -222,7 +222,7 @@ class BidController extends Controller
             // Send email notification to guide
             Mail::to($bid->guide->user->email)->send(new BidRejected($bid));
 
-            return redirect()->route('tourist-requests.show', $touristRequest)
+            return redirect()->route('tourist.requests.show', $touristRequest)
                 ->with('success', 'Proposal has been rejected. The guide has been notified.');
 
         } catch (\Exception $e) {

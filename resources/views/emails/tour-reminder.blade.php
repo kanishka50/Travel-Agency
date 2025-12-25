@@ -32,7 +32,7 @@ We're excited to remind you that your amazing tour **{{ $booking->guidePlan->tit
 - [ ] Have your booking number ready: **{{ $booking->booking_number }}**
 - [ ] Confirm pickup location with your guide
 
-<x-mail::button :url="route('bookings.show', $booking->id)">
+<x-mail::button :url="route('tourist.bookings.show', $booking->id)">
 View Full Booking Details
 </x-mail::button>
 

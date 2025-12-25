@@ -33,19 +33,19 @@ class PlanProposalController extends Controller
     {
         // Check if plan allows proposals
         if (!$plan->allowsProposals()) {
-            return redirect()->route('plans.show', $plan->id)
+            return redirect()->route('tour-packages.show', $plan->id)
                 ->with('error', 'This tour does not accept proposals.');
         }
 
         // Check if plan is active
         if (!$plan->isActive()) {
-            return redirect()->route('plans.show', $plan->id)
+            return redirect()->route('tour-packages.show', $plan->id)
                 ->with('error', 'This tour is not currently available.');
         }
 
         $plan->load('guide.user');
 
-        return view('proposals.create', compact('plan'));
+        return view('tourist.proposals.create', compact('plan'));
     }
 
     /**
@@ -125,7 +125,7 @@ class PlanProposalController extends Controller
 
         $proposals = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('proposals.tourist-index', compact('proposals'));
+        return view('tourist.proposals.index', compact('proposals'));
     }
 
     /**
@@ -142,7 +142,7 @@ class PlanProposalController extends Controller
 
         $proposal->load(['guidePlan.guide.user', 'booking']);
 
-        return view('proposals.tourist-show', compact('proposal'));
+        return view('tourist.proposals.show', compact('proposal'));
     }
 
     /**

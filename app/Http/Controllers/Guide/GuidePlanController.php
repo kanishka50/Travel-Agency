@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Guide;
 
 use App\Http\Controllers\Controller;
 use App\Models\GuidePlan;
+use App\Models\GuidePlanPhoto;
+use App\Models\GuidePlanItinerary;
+use App\Models\GuidePlanAddon;
 use App\Models\Guide;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -92,6 +96,21 @@ class GuidePlanController extends Controller
 
         $plan = GuidePlan::create($validated);
 
+        // Handle gallery photos upload
+        if ($request->hasFile('gallery_photos')) {
+            $this->uploadGalleryPhotos($plan, $request->file('gallery_photos'));
+        }
+
+        // Handle itineraries
+        if ($request->has('itineraries')) {
+            $this->saveItineraries($plan, $request->input('itineraries', []));
+        }
+
+        // Handle add-ons
+        if ($request->has('addons')) {
+            $this->saveAddons($plan, $request->input('addons', []));
+        }
+
         return redirect()->route('guide.plans.show', $plan)
             ->with('success', 'Tour plan created successfully!');
     }
@@ -103,6 +122,8 @@ class GuidePlanController extends Controller
     {
         $this->authorizeGuidePlan($plan);
 
+        $plan->load(['photos', 'itineraries', 'addons']);
+
         return view('guide.plans.show', compact('plan'));
     }
 
@@ -112,6 +133,8 @@ class GuidePlanController extends Controller
     public function edit(GuidePlan $plan)
     {
         $this->authorizeGuidePlan($plan);
+
+        $plan->load(['photos', 'itineraries', 'addons']);
 
         return view('guide.plans.edit', compact('plan'));
     }
@@ -154,6 +177,31 @@ class GuidePlanController extends Controller
 
         $plan->update($validated);
 
+        // Handle photo deletions
+        if ($request->has('delete_photos')) {
+            $this->deleteGalleryPhotos($plan, $request->input('delete_photos', []));
+        }
+
+        // Handle new gallery photos upload
+        if ($request->hasFile('gallery_photos')) {
+            $this->uploadGalleryPhotos($plan, $request->file('gallery_photos'));
+        }
+
+        // Handle photo reordering
+        if ($request->has('photo_order')) {
+            $this->reorderPhotos($plan, $request->input('photo_order', []));
+        }
+
+        // Handle itineraries
+        if ($request->has('itineraries')) {
+            $this->saveItineraries($plan, $request->input('itineraries', []));
+        }
+
+        // Handle add-ons
+        if ($request->has('addons')) {
+            $this->saveAddons($plan, $request->input('addons', []));
+        }
+
         return redirect()->route('guide.plans.show', $plan)
             ->with('success', 'Tour plan updated successfully!');
     }
@@ -175,6 +223,12 @@ class GuidePlanController extends Controller
             Storage::disk('public')->delete($plan->cover_photo);
         }
 
+        // Gallery photos will be deleted automatically via model boot method
+        // But we need to delete files first
+        foreach ($plan->photos as $photo) {
+            Storage::disk('public')->delete($photo->photo_path);
+        }
+
         $plan->delete();
 
         return redirect()->route('guide.plans.index')
@@ -194,6 +248,20 @@ class GuidePlanController extends Controller
         $newPlan->view_count = 0;
         $newPlan->booking_count = 0;
         $newPlan->save();
+
+        // Duplicate itineraries
+        foreach ($plan->itineraries as $itinerary) {
+            $newItinerary = $itinerary->replicate();
+            $newItinerary->guide_plan_id = $newPlan->id;
+            $newItinerary->save();
+        }
+
+        // Duplicate add-ons
+        foreach ($plan->addons as $addon) {
+            $newAddon = $addon->replicate();
+            $newAddon->guide_plan_id = $newPlan->id;
+            $newAddon->save();
+        }
 
         return redirect()->route('guide.plans.edit', $newPlan)
             ->with('success', 'Tour plan duplicated successfully! You can now edit it.');
@@ -266,19 +334,207 @@ class GuidePlanController extends Controller
             'available_start_date' => ['nullable', 'date', 'required_if:availability_type,date_range'],
             'available_end_date' => ['nullable', 'date', 'after:available_start_date', 'required_if:availability_type,date_range'],
             'vehicle_type' => ['nullable', 'string', 'max:100'],
-            'vehicle_category' => ['nullable', 'string'],
             'vehicle_capacity' => ['nullable', 'integer', 'min:1', 'max:50'],
             'vehicle_ac' => ['boolean'],
             'vehicle_description' => ['nullable', 'string'],
             'dietary_options' => ['nullable', 'array'],
             'accessibility_info' => ['nullable', 'string'],
-            'cancellation_policy' => ['nullable', 'string'],
             'inclusions' => ['required', 'string'],
             'exclusions' => ['required', 'string'],
             'cover_photo' => ['nullable', 'image', 'max:5120'], // 5MB max
+            'gallery_photos' => ['nullable', 'array', 'max:25'], // Max 25 photos
+            'gallery_photos.*' => ['image', 'max:5120'], // Each photo max 5MB
+            'delete_photos' => ['nullable', 'array'],
+            'delete_photos.*' => ['integer'],
+            'photo_order' => ['nullable', 'array'],
+            'photo_order.*' => ['integer'],
             'status' => ['required', Rule::in(['draft', 'active', 'inactive'])],
             'allow_proposals' => ['nullable', 'boolean'],
             'min_proposal_price' => ['nullable', 'numeric', 'min:0'],
+            // Itinerary validation
+            'itineraries' => ['nullable', 'array'],
+            'itineraries.*.day_number' => ['required_with:itineraries', 'integer', 'min:1'],
+            'itineraries.*.day_title' => ['required_with:itineraries', 'string', 'max:255'],
+            'itineraries.*.description' => ['required_with:itineraries', 'string'],
+            'itineraries.*.accommodation_name' => ['nullable', 'string', 'max:255'],
+            'itineraries.*.accommodation_type' => ['nullable', Rule::in(['hotel', 'guesthouse', 'resort', 'homestay', 'camping', 'other'])],
+            'itineraries.*.accommodation_tier' => ['nullable', Rule::in(['budget', 'midrange', 'luxury'])],
+            'itineraries.*.breakfast_included' => ['nullable', 'boolean'],
+            'itineraries.*.lunch_included' => ['nullable', 'boolean'],
+            'itineraries.*.dinner_included' => ['nullable', 'boolean'],
+            'itineraries.*.meal_notes' => ['nullable', 'string'],
+            // Add-on validation
+            'addons' => ['nullable', 'array'],
+            'addons.*.addon_name' => ['required_with:addons', 'string', 'max:255'],
+            'addons.*.addon_description' => ['required_with:addons', 'string'],
+            'addons.*.day_number' => ['nullable', 'integer', 'min:0'],
+            'addons.*.price_per_person' => ['required_with:addons', 'numeric', 'min:0'],
+            'addons.*.require_all_participants' => ['nullable', 'boolean'],
+            'addons.*.max_participants' => ['nullable', 'integer', 'min:1'],
         ]);
+    }
+
+    /**
+     * Upload gallery photos for a plan.
+     */
+    private function uploadGalleryPhotos(GuidePlan $plan, array $photos): void
+    {
+        // Get the current max display order
+        $maxOrder = $plan->photos()->max('display_order') ?? -1;
+
+        foreach ($photos as $index => $photo) {
+            $path = $photo->store('guide-plans/photos/' . $plan->id, 'public');
+
+            $plan->photos()->create([
+                'photo_path' => $path,
+                'display_order' => $maxOrder + $index + 1,
+            ]);
+        }
+    }
+
+    /**
+     * Delete gallery photos for a plan.
+     */
+    private function deleteGalleryPhotos(GuidePlan $plan, array $photoIds): void
+    {
+        foreach ($photoIds as $photoId) {
+            $photo = GuidePlanPhoto::find($photoId);
+            if ($photo && $photo->guide_plan_id === $plan->id) {
+                // File deletion is handled by the model's boot method
+                $photo->delete();
+            }
+        }
+    }
+
+    /**
+     * Reorder gallery photos for a plan.
+     */
+    private function reorderPhotos(GuidePlan $plan, array $photoOrder): void
+    {
+        foreach ($photoOrder as $order => $photoId) {
+            GuidePlanPhoto::where('id', $photoId)
+                ->where('guide_plan_id', $plan->id)
+                ->update(['display_order' => $order]);
+        }
+    }
+
+    /**
+     * Delete a single photo via AJAX.
+     */
+    public function deletePhoto(GuidePlan $plan, GuidePlanPhoto $photo)
+    {
+        $this->authorizeGuidePlan($plan);
+
+        if ($photo->guide_plan_id !== $plan->id) {
+            abort(403, 'Unauthorized access to this photo.');
+        }
+
+        $photo->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Photo deleted successfully.']);
+        }
+
+        return back()->with('success', 'Photo deleted successfully.');
+    }
+
+    /**
+     * Save itineraries for a plan (creates, updates, and deletes as needed).
+     */
+    private function saveItineraries(GuidePlan $plan, array $itineraries): void
+    {
+        // Get existing itinerary IDs
+        $existingIds = $plan->itineraries()->pluck('id')->toArray();
+        $submittedIds = [];
+
+        foreach ($itineraries as $itineraryData) {
+            // Skip empty itinerary entries
+            if (empty($itineraryData['day_title']) || empty($itineraryData['description'])) {
+                continue;
+            }
+
+            $data = [
+                'guide_plan_id' => $plan->id,
+                'day_number' => $itineraryData['day_number'] ?? 1,
+                'day_title' => $itineraryData['day_title'],
+                'description' => $itineraryData['description'],
+                'accommodation_name' => $itineraryData['accommodation_name'] ?? null,
+                'accommodation_type' => $itineraryData['accommodation_type'] ?? null,
+                'accommodation_tier' => $itineraryData['accommodation_tier'] ?? null,
+                'breakfast_included' => isset($itineraryData['breakfast_included']) && $itineraryData['breakfast_included'],
+                'lunch_included' => isset($itineraryData['lunch_included']) && $itineraryData['lunch_included'],
+                'dinner_included' => isset($itineraryData['dinner_included']) && $itineraryData['dinner_included'],
+                'meal_notes' => $itineraryData['meal_notes'] ?? null,
+            ];
+
+            if (!empty($itineraryData['id'])) {
+                // Update existing itinerary
+                $itinerary = GuidePlanItinerary::find($itineraryData['id']);
+                if ($itinerary && $itinerary->guide_plan_id === $plan->id) {
+                    $itinerary->update($data);
+                    $submittedIds[] = $itinerary->id;
+                }
+            } else {
+                // Create new itinerary
+                $newItinerary = $plan->itineraries()->create($data);
+                $submittedIds[] = $newItinerary->id;
+            }
+        }
+
+        // Delete itineraries that were not submitted (removed by user)
+        $idsToDelete = array_diff($existingIds, $submittedIds);
+        if (!empty($idsToDelete)) {
+            GuidePlanItinerary::whereIn('id', $idsToDelete)
+                ->where('guide_plan_id', $plan->id)
+                ->delete();
+        }
+    }
+
+    /**
+     * Save add-ons for a plan (creates, updates, and deletes as needed).
+     */
+    private function saveAddons(GuidePlan $plan, array $addons): void
+    {
+        // Get existing addon IDs
+        $existingIds = $plan->addons()->pluck('id')->toArray();
+        $submittedIds = [];
+
+        foreach ($addons as $addonData) {
+            // Skip empty addon entries
+            if (empty($addonData['addon_name']) || empty($addonData['addon_description'])) {
+                continue;
+            }
+
+            $data = [
+                'guide_plan_id' => $plan->id,
+                'addon_name' => $addonData['addon_name'],
+                'addon_description' => $addonData['addon_description'],
+                'day_number' => $addonData['day_number'] ?? 0,
+                'price_per_person' => $addonData['price_per_person'] ?? 0,
+                'require_all_participants' => isset($addonData['require_all_participants']) && $addonData['require_all_participants'],
+                'max_participants' => !empty($addonData['max_participants']) ? $addonData['max_participants'] : null,
+            ];
+
+            if (!empty($addonData['id'])) {
+                // Update existing addon
+                $addon = GuidePlanAddon::find($addonData['id']);
+                if ($addon && $addon->guide_plan_id === $plan->id) {
+                    $addon->update($data);
+                    $submittedIds[] = $addon->id;
+                }
+            } else {
+                // Create new addon
+                $newAddon = $plan->addons()->create($data);
+                $submittedIds[] = $newAddon->id;
+            }
+        }
+
+        // Delete addons that were not submitted (removed by user)
+        $idsToDelete = array_diff($existingIds, $submittedIds);
+        if (!empty($idsToDelete)) {
+            GuidePlanAddon::whereIn('id', $idsToDelete)
+                ->where('guide_plan_id', $plan->id)
+                ->delete();
+        }
     }
 }

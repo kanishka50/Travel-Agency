@@ -129,4 +129,61 @@ class Booking extends Model
     {
         return $this->booking_type === 'plan_proposal' && $this->accepted_proposal_id !== null;
     }
+
+    /**
+     * Get the vehicle assignment for this booking
+     */
+    public function vehicleAssignment(): HasOne
+    {
+        return $this->hasOne(BookingVehicleAssignment::class);
+    }
+
+    /**
+     * Check if this booking has a vehicle assigned
+     */
+    public function hasVehicleAssigned(): bool
+    {
+        return $this->vehicleAssignment()->exists();
+    }
+
+    /**
+     * Get total number of participants (adults + children)
+     */
+    public function getTotalParticipantsAttribute(): int
+    {
+        return $this->num_adults + $this->num_children;
+    }
+
+    /**
+     * Check if booking needs vehicle assignment (upcoming and no vehicle)
+     */
+    public function needsVehicleAssignment(): bool
+    {
+        return !$this->hasVehicleAssigned()
+            && $this->start_date >= now()
+            && !in_array($this->status, [
+                'cancelled_by_tourist',
+                'cancelled_by_guide',
+                'cancelled_by_admin',
+                'completed',
+                'pending_payment',
+                'payment_failed'
+            ]);
+    }
+
+    /**
+     * Get days until tour starts
+     */
+    public function getDaysUntilStartAttribute(): int
+    {
+        return max(0, now()->diffInDays($this->start_date, false));
+    }
+
+    /**
+     * Check if booking is within 3-day vehicle assignment deadline
+     */
+    public function isWithinVehicleDeadline(): bool
+    {
+        return $this->days_until_start <= 3 && $this->days_until_start >= 0;
+    }
 }

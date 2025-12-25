@@ -52,4 +52,14 @@ class TouristController extends Controller
             'recentBookings' => $recentBookings,
         ]);
     }
+
+    public function settings()
+    {
+        $tourist = auth()->user()->tourist;
+
+        return view('tourist.settings', [
+            'tourist' => $tourist,
+            'user' => auth()->user(),
+        ]);
+    }
 }

@@ -190,11 +190,11 @@ class GuidePlanResource extends Resource
                     ->columns(2)
                     ->collapsible(),
 
-                // Vehicle Information Section
-                Section::make('Vehicle Information')
-                    ->description('Details about transportation')
+                // Vehicle Requirements Section
+                Section::make('Vehicle Requirements')
+                    ->description('Vehicle specifications for this tour (actual vehicle assigned at booking)')
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(2)
                             ->schema([
                                 Forms\Components\Select::make('vehicle_type')
                                     ->label('Vehicle Type')
@@ -208,18 +208,8 @@ class GuidePlanResource extends Resource
                                     ])
                                     ->searchable(),
 
-                                Forms\Components\Select::make('vehicle_category')
-                                    ->label('Vehicle Category')
-                                    ->options([
-                                        'Economy' => 'Economy',
-                                        'Standard' => 'Standard',
-                                        'Luxury' => 'Luxury',
-                                        'Premium' => 'Premium',
-                                    ])
-                                    ->searchable(),
-
                                 Forms\Components\TextInput::make('vehicle_capacity')
-                                    ->label('Vehicle Capacity')
+                                    ->label('Seating Capacity')
                                     ->numeric()
                                     ->minValue(1)
                                     ->maxValue(50)
@@ -227,14 +217,14 @@ class GuidePlanResource extends Resource
                             ]),
 
                         Forms\Components\Toggle::make('vehicle_ac')
-                            ->label('Air Conditioning Available')
+                            ->label('Has Air Conditioning')
                             ->default(true)
                             ->inline(false),
 
                         Forms\Components\Textarea::make('vehicle_description')
                             ->label('Vehicle Description')
                             ->rows(3)
-                            ->placeholder('Describe the vehicle features and comfort...')
+                            ->placeholder('Optional description of vehicle features...')
                             ->columnSpan('full'),
                     ])
                     ->columns(2)
@@ -288,22 +278,9 @@ class GuidePlanResource extends Resource
                     ->columns(2)
                     ->collapsible(),
 
-                // Policies Section
-                Section::make('Policies')
-                    ->description('Cancellation and other policies')
-                    ->schema([
-                        Forms\Components\Textarea::make('cancellation_policy')
-                            ->label('Cancellation Policy')
-                            ->rows(4)
-                            ->placeholder('Describe your cancellation policy and refund terms...')
-                            ->columnSpan('full'),
-                    ])
-                    ->columns(1)
-                    ->collapsible(),
-
-                // Cover Photo & Status Section
-                Section::make('Media & Status')
-                    ->description('Cover photo and plan status')
+                // Cover Photo Section
+                Section::make('Cover Photo')
+                    ->description('Main cover photo for the tour')
                     ->schema([
                         Forms\Components\FileUpload::make('cover_photo')
                             ->label('Cover Photo')
@@ -315,8 +292,217 @@ class GuidePlanResource extends Resource
                                 '4:3',
                             ])
                             ->maxSize(5120)
-                            ->helperText('Max size: 5MB. Recommended: 1920x1080px'),
+                            ->helperText('Max size: 5MB. Recommended: 1920x1080px')
+                            ->columnSpan('full'),
+                    ])
+                    ->columns(1)
+                    ->collapsible(),
 
+                // Gallery Photos Section
+                Section::make('Gallery Photos')
+                    ->description('Additional photos to showcase your tour (up to 25 photos)')
+                    ->schema([
+                        Forms\Components\Repeater::make('photos')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\FileUpload::make('photo_path')
+                                    ->label('Photo')
+                                    ->image()
+                                    ->directory('guide-plans/photos')
+                                    ->required()
+                                    ->maxSize(5120)
+                                    ->columnSpan('full'),
+
+                                Forms\Components\Hidden::make('display_order')
+                                    ->default(0),
+                            ])
+                            ->columns(1)
+                            ->reorderable('display_order')
+                            ->reorderableWithButtons()
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): ?string => $state['photo_path'] ? 'Photo' : 'New Photo')
+                            ->maxItems(25)
+                            ->defaultItems(0)
+                            ->addActionLabel('Add Photo')
+                            ->deleteAction(
+                                fn (Forms\Components\Actions\Action $action) => $action
+                                    ->requiresConfirmation()
+                            ),
+                    ])
+                    ->collapsible()
+                    ->collapsed(),
+
+                // Day-by-Day Itinerary Section
+                Section::make('Day-by-Day Itinerary')
+                    ->description('Add detailed information for each day of the tour')
+                    ->schema([
+                        Forms\Components\Repeater::make('itineraries')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('day_number')
+                                            ->label('Day Number')
+                                            ->required()
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->default(1),
+
+                                        Forms\Components\TextInput::make('day_title')
+                                            ->label('Day Title')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->placeholder('e.g., Arrival in Colombo & City Tour'),
+                                    ]),
+
+                                Forms\Components\Textarea::make('description')
+                                    ->label('Day Description')
+                                    ->required()
+                                    ->rows(4)
+                                    ->placeholder('Describe the activities, attractions, and experiences for this day...')
+                                    ->columnSpan('full'),
+
+                                Forms\Components\Fieldset::make('Accommodation')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('accommodation_name')
+                                            ->label('Accommodation Name')
+                                            ->placeholder('e.g., Cinnamon Grand'),
+
+                                        Forms\Components\Select::make('accommodation_type')
+                                            ->label('Type')
+                                            ->options([
+                                                'hotel' => 'Hotel',
+                                                'guesthouse' => 'Guesthouse',
+                                                'resort' => 'Resort',
+                                                'homestay' => 'Homestay',
+                                                'camping' => 'Camping',
+                                                'other' => 'Other',
+                                            ]),
+
+                                        Forms\Components\Select::make('accommodation_tier')
+                                            ->label('Tier')
+                                            ->options([
+                                                'budget' => 'Budget',
+                                                'midrange' => 'Mid-Range',
+                                                'luxury' => 'Luxury',
+                                            ]),
+                                    ])
+                                    ->columns(3),
+
+                                Forms\Components\Fieldset::make('Meals Included')
+                                    ->schema([
+                                        Forms\Components\Toggle::make('breakfast_included')
+                                            ->label('Breakfast')
+                                            ->inline(false),
+
+                                        Forms\Components\Toggle::make('lunch_included')
+                                            ->label('Lunch')
+                                            ->inline(false),
+
+                                        Forms\Components\Toggle::make('dinner_included')
+                                            ->label('Dinner')
+                                            ->inline(false),
+
+                                        Forms\Components\TextInput::make('meal_notes')
+                                            ->label('Meal Notes')
+                                            ->placeholder('e.g., Special local cuisine experience')
+                                            ->columnSpan('full'),
+                                    ])
+                                    ->columns(3),
+                            ])
+                            ->reorderable('day_number')
+                            ->reorderableWithButtons()
+                            ->collapsible()
+                            ->cloneable()
+                            ->itemLabel(fn (array $state): ?string =>
+                                isset($state['day_number']) && isset($state['day_title'])
+                                    ? "Day {$state['day_number']}: {$state['day_title']}"
+                                    : 'New Day'
+                            )
+                            ->defaultItems(0)
+                            ->addActionLabel('Add Day')
+                            ->deleteAction(
+                                fn (Forms\Components\Actions\Action $action) => $action
+                                    ->requiresConfirmation()
+                            ),
+                    ])
+                    ->collapsible()
+                    ->collapsed(),
+
+                // Optional Add-ons Section
+                Section::make('Optional Add-ons')
+                    ->description('Add optional activities or services that tourists can add to their booking')
+                    ->schema([
+                        Forms\Components\Repeater::make('addons')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('addon_name')
+                                            ->label('Add-on Name')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->placeholder('e.g., Hot Air Balloon Ride'),
+
+                                        Forms\Components\Select::make('day_number')
+                                            ->label('Available on Day')
+                                            ->options(array_merge(
+                                                [0 => 'Any Day'],
+                                                array_combine(range(1, 30), array_map(fn($d) => "Day {$d}", range(1, 30)))
+                                            ))
+                                            ->default(0),
+                                    ]),
+
+                                Forms\Components\Textarea::make('addon_description')
+                                    ->label('Description')
+                                    ->required()
+                                    ->rows(3)
+                                    ->placeholder('Describe what is included in this add-on...')
+                                    ->columnSpan('full'),
+
+                                Forms\Components\Grid::make(3)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('price_per_person')
+                                            ->label('Price per Person (USD)')
+                                            ->required()
+                                            ->numeric()
+                                            ->prefix('$')
+                                            ->minValue(0)
+                                            ->step(0.01),
+
+                                        Forms\Components\TextInput::make('max_participants')
+                                            ->label('Max Participants')
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->placeholder('Leave empty for no limit'),
+
+                                        Forms\Components\Toggle::make('require_all_participants')
+                                            ->label('Require All Participants')
+                                            ->helperText('All travelers must opt-in')
+                                            ->inline(false),
+                                    ]),
+                            ])
+                            ->collapsible()
+                            ->cloneable()
+                            ->itemLabel(fn (array $state): ?string =>
+                                isset($state['addon_name']) && $state['addon_name']
+                                    ? $state['addon_name'] . (isset($state['price_per_person']) ? ' - $' . number_format((float)$state['price_per_person'], 2) : '')
+                                    : 'New Add-on'
+                            )
+                            ->defaultItems(0)
+                            ->addActionLabel('Add Add-on')
+                            ->deleteAction(
+                                fn (Forms\Components\Actions\Action $action) => $action
+                                    ->requiresConfirmation()
+                            ),
+                    ])
+                    ->collapsible()
+                    ->collapsed(),
+
+                // Status Section
+                Section::make('Status')
+                    ->description('Plan visibility and status')
+                    ->schema([
                         Forms\Components\Select::make('status')
                             ->options([
                                 'draft' => 'Draft',
@@ -327,7 +513,7 @@ class GuidePlanResource extends Resource
                             ->default('draft')
                             ->helperText('Draft plans are not visible to tourists'),
                     ])
-                    ->columns(2)
+                    ->columns(1)
                     ->collapsible(),
 
                 // Statistics Section (Read-only for edit mode)

@@ -2,6 +2,28 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Breadcrumbs -->
+    <nav class="flex mb-6" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{{ route('guide.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-emerald-600">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    Dashboard
+                </a>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="ml-1 text-sm font-medium text-emerald-600 md:ml-2">My Tour Plans</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Header -->
     <div class="mb-8">
         <div class="flex justify-between items-center">
@@ -9,7 +31,7 @@
                 <h1 class="text-3xl font-bold text-gray-900">My Tour Plans</h1>
                 <p class="text-gray-600 mt-2">Manage your tour plans and itineraries</p>
             </div>
-            <a href="{{ route('guide.plans.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">
+            <a href="{{ route('guide.plans.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
@@ -22,8 +44,8 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center">
-                <div class="p-3 bg-blue-100 rounded-full">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-3 bg-emerald-100 rounded-full">
+                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                 </div>
@@ -36,14 +58,28 @@
 
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center">
-                <div class="p-3 bg-green-100 rounded-full">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-3 bg-teal-100 rounded-full">
+                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Active</p>
-                    <p class="text-2xl font-bold text-green-600">{{ $stats['active'] }}</p>
+                    <p class="text-2xl font-bold text-teal-600">{{ $stats['active'] }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-amber-100 rounded-full">
+                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Drafts</p>
+                    <p class="text-2xl font-bold text-amber-600">{{ $stats['draft'] }}</p>
                 </div>
             </div>
         </div>
@@ -52,26 +88,12 @@
             <div class="flex items-center">
                 <div class="p-3 bg-gray-100 rounded-full">
                     <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Drafts</p>
-                    <p class="text-2xl font-bold text-gray-600">{{ $stats['draft'] }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 bg-red-100 rounded-full">
-                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
                     </svg>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Inactive</p>
-                    <p class="text-2xl font-bold text-red-600">{{ $stats['inactive'] }}</p>
+                    <p class="text-2xl font-bold text-gray-600">{{ $stats['inactive'] }}</p>
                 </div>
             </div>
         </div>
@@ -79,7 +101,7 @@
 
     <!-- Success Message -->
     @if(session('success'))
-        <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+        <div class="mb-6 bg-emerald-100 border border-emerald-400 text-emerald-700 px-4 py-3 rounded relative" role="alert">
             <span class="block sm:inline">{{ session('success') }}</span>
         </div>
     @endif
@@ -93,16 +115,16 @@
     <!-- Filter Tabs -->
     <div class="mb-6 border-b border-gray-200">
         <nav class="-mb-px flex space-x-8">
-            <a href="{{ route('guide.plans.index') }}" class="border-b-2 border-blue-500 py-4 px-1 text-sm font-medium text-blue-600">
+            <a href="{{ route('guide.plans.index') }}" class="border-b-2 border-emerald-500 py-4 px-1 text-sm font-medium text-emerald-600">
                 All Plans ({{ $stats['total'] }})
             </a>
-            <a href="{{ route('guide.plans.index', ['status' => 'active']) }}" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+            <a href="{{ route('guide.plans.index', ['status' => 'active']) }}" class="border-transparent text-gray-500 hover:text-emerald-600 hover:border-emerald-300 border-b-2 py-4 px-1 text-sm font-medium">
                 Active ({{ $stats['active'] }})
             </a>
-            <a href="{{ route('guide.plans.index', ['status' => 'draft']) }}" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+            <a href="{{ route('guide.plans.index', ['status' => 'draft']) }}" class="border-transparent text-gray-500 hover:text-emerald-600 hover:border-emerald-300 border-b-2 py-4 px-1 text-sm font-medium">
                 Drafts ({{ $stats['draft'] }})
             </a>
-            <a href="{{ route('guide.plans.index', ['status' => 'inactive']) }}" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium">
+            <a href="{{ route('guide.plans.index', ['status' => 'inactive']) }}" class="border-transparent text-gray-500 hover:text-emerald-600 hover:border-emerald-300 border-b-2 py-4 px-1 text-sm font-medium">
                 Inactive ({{ $stats['inactive'] }})
             </a>
         </nav>
@@ -117,7 +139,7 @@
             <h3 class="mt-2 text-sm font-medium text-gray-900">No tour plans</h3>
             <p class="mt-1 text-sm text-gray-500">Get started by creating a new tour plan.</p>
             <div class="mt-6">
-                <a href="{{ route('guide.plans.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">
+                <a href="{{ route('guide.plans.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
@@ -167,11 +189,11 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($plan->status === 'active')
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">Active</span>
                                 @elseif($plan->status === 'draft')
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Draft</span>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">Draft</span>
                                 @else
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Inactive</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -180,20 +202,20 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end space-x-2">
-                                    <a href="{{ route('guide.plans.show', $plan) }}" class="text-blue-600 hover:text-blue-900" title="View">
+                                    <a href="{{ route('guide.plans.show', $plan) }}" class="text-emerald-600 hover:text-emerald-900" title="View">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                         </svg>
                                     </a>
-                                    <a href="{{ route('guide.plans.edit', $plan) }}" class="text-indigo-600 hover:text-indigo-900" title="Edit">
+                                    <a href="{{ route('guide.plans.edit', $plan) }}" class="text-teal-600 hover:text-teal-900" title="Edit">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
                                     </a>
                                     <form action="{{ route('guide.plans.duplicate', $plan) }}" method="POST" class="inline">
                                         @csrf
-                                        <button type="submit" class="text-green-600 hover:text-green-900" title="Duplicate">
+                                        <button type="submit" class="text-cyan-600 hover:text-cyan-900" title="Duplicate">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                                             </svg>

@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 py-8 max-w-4xl">
     <!-- Header -->
     <div class="mb-8">
-        <a href="{{ route('tourist.complaints.index') }}" class="text-blue-600 hover:text-blue-800 inline-flex items-center mb-4">
+        <a href="{{ route('tourist.complaints.index') }}" class="text-emerald-600 hover:text-emerald-800 inline-flex items-center mb-4">
             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
@@ -25,7 +25,7 @@
             <div>
                 <label for="booking_id" class="block text-sm font-medium text-gray-700 mb-2">Select Booking</label>
                 <select name="booking_id" id="booking_id"
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                        class="w-full rounded-lg border-gray-300 focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="">No specific booking</option>
                     @foreach($bookings as $booking)
                         <option value="{{ $booking->id }}"
@@ -55,7 +55,7 @@
                     <span class="text-gray-500 font-normal">(Required if no booking selected)</span>
                 </label>
                 <select name="guide_selection" id="guide_selection"
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                        class="w-full rounded-lg border-gray-300 focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="">Select a guide</option>
                     @foreach($guides as $guide)
                         <option value="{{ $guide['id'] }}" {{ old('guide_selection') == $guide['id'] ? 'selected' : '' }}>
@@ -75,7 +75,7 @@
             <div class="mb-4">
                 <label for="complaint_type" class="block text-sm font-medium text-gray-700 mb-2">Complaint Type *</label>
                 <select name="complaint_type" id="complaint_type" required
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                        class="w-full rounded-lg border-gray-300 focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="">Select complaint type</option>
                     <option value="service_quality" {{ old('complaint_type') == 'service_quality' ? 'selected' : '' }}>Service Quality</option>
                     <option value="safety_concern" {{ old('complaint_type') == 'safety_concern' ? 'selected' : '' }}>Safety Concern</option>
@@ -95,7 +95,7 @@
                 <input type="text" name="subject" id="subject" required
                        value="{{ old('subject') }}"
                        placeholder="Brief summary of your complaint"
-                       class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                       class="w-full rounded-lg border-gray-300 focus:ring-emerald-500 focus:border-emerald-500">
                 @error('subject')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -109,7 +109,7 @@
                 </label>
                 <textarea name="description" id="description" required rows="8"
                           placeholder="Please provide a detailed description of your complaint. Include dates, times, and any relevant details."
-                          class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">{{ old('description') }}</textarea>
+                          class="w-full rounded-lg border-gray-300 focus:ring-emerald-500 focus:border-emerald-500">{{ old('description') }}</textarea>
                 <p class="mt-1 text-sm text-gray-500">
                     Character count: <span id="char-count">0</span> / 50 minimum
                 </p>
@@ -123,14 +123,14 @@
                 <label for="evidence_files" class="block text-sm font-medium text-gray-700 mb-2">
                     Supporting Evidence (Optional)
                 </label>
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-emerald-400 transition-colors">
                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                     </svg>
                     <input type="file" name="evidence_files[]" id="evidence_files" multiple
                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                            class="hidden">
-                    <label for="evidence_files" class="mt-2 block text-sm font-medium text-gray-700 cursor-pointer">
+                    <label for="evidence_files" class="mt-2 block text-sm font-medium text-emerald-600 cursor-pointer hover:text-emerald-700">
                         Click to upload files
                     </label>
                     <p class="text-xs text-gray-500 mt-1">
@@ -145,16 +145,16 @@
         </div>
 
         <!-- Important Notice -->
-        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-sm font-medium text-yellow-800">Important Notice</h3>
-                    <div class="mt-2 text-sm text-yellow-700">
+                    <h3 class="text-sm font-medium text-amber-800">Important Notice</h3>
+                    <div class="mt-2 text-sm text-amber-700">
                         <ul class="list-disc list-inside space-y-1">
                             <li>Please provide accurate and honest information</li>
                             <li>False complaints may result in account suspension</li>
@@ -173,7 +173,7 @@
                 Cancel
             </a>
             <button type="submit"
-                    class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors">
+                    class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-colors">
                 Submit Complaint
             </button>
         </div>

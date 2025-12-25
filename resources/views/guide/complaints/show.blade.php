@@ -4,12 +4,12 @@
 <div class="container mx-auto px-4 py-8 max-w-6xl">
     <!-- Success/Error Messages -->
     @if(session('success'))
-        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded">
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 mb-6 rounded">
             <div class="flex items-center">
-                <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6 text-emerald-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                <p class="text-green-700 font-semibold">{{ session('success') }}</p>
+                <p class="text-emerald-700 font-semibold">{{ session('success') }}</p>
             </div>
         </div>
     @endif
@@ -25,13 +25,35 @@
         </div>
     @endif
 
-    <!-- Back Button -->
-    <a href="{{ route('guide.complaints.index') }}" class="text-blue-600 hover:text-blue-800 inline-flex items-center mb-6">
-        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-        </svg>
-        Back to Complaints
-    </a>
+    <!-- Breadcrumbs -->
+    <nav class="flex mb-6" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{{ route('guide.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-emerald-600">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <a href="{{ route('guide.complaints.index') }}" class="ml-1 text-sm font-medium text-gray-500 hover:text-emerald-600 md:ml-2">My Complaints</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="ml-1 text-sm font-medium text-emerald-600 md:ml-2">{{ $complaint->complaint_number }}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Main Content -->
@@ -45,15 +67,15 @@
                     </div>
                     <div class="text-right">
                         @if($complaint->status === 'open')
-                            <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-amber-100 text-amber-800">
                                 Open
                             </span>
                         @elseif($complaint->status === 'under_review')
-                            <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-blue-100 text-blue-800">
+                            <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-cyan-100 text-cyan-800">
                                 Under Review
                             </span>
                         @elseif($complaint->status === 'resolved')
-                            <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-green-100 text-green-800">
+                            <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-emerald-100 text-emerald-800">
                                 Resolved
                             </span>
                         @else
@@ -79,7 +101,7 @@
                                     <svg class="w-6 h-6 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
-                                    <span class="text-sm text-blue-600">{{ basename($file) }}</span>
+                                    <span class="text-sm text-emerald-600">{{ basename($file) }}</span>
                                 </a>
                             @endforeach
                         </div>
@@ -89,7 +111,7 @@
                 @if($complaint->resolution_summary)
                     <div class="border-t pt-4 mt-4">
                         <h3 class="font-semibold text-gray-900 mb-2">Resolution Summary</h3>
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
                             <p class="text-gray-700">{{ $complaint->resolution_summary }}</p>
                             @if($complaint->resolved_at)
                                 <p class="text-sm text-gray-500 mt-2">Resolved on {{ $complaint->resolved_at->format('M j, Y g:i A') }}</p>
@@ -106,12 +128,12 @@
                 @if($complaint->responses->count() > 0)
                     <div class="space-y-4">
                         @foreach($complaint->responses as $response)
-                            <div class="border rounded-lg p-4 {{ $response->responder_type === 'admin' ? 'bg-blue-50 border-blue-200' : 'bg-gray-50' }}">
+                            <div class="border rounded-lg p-4 {{ $response->responder_type === 'admin' ? 'bg-teal-50 border-teal-200' : 'bg-gray-50' }}">
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0">
                                             @if($response->responder_type === 'admin')
-                                                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
+                                                <div class="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                                     </svg>
@@ -130,7 +152,7 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-xs px-2 py-1 rounded-full {{ $response->responder_type === 'admin' ? 'bg-blue-200 text-blue-800' : 'bg-gray-200 text-gray-800' }}">
+                                        <span class="text-xs px-2 py-1 rounded-full {{ $response->responder_type === 'admin' ? 'bg-teal-200 text-teal-800' : 'bg-gray-200 text-gray-800' }}">
                                             {{ $response->getResponseTypeLabel() }}
                                         </span>
                                         <p class="text-xs text-gray-500 mt-1">{{ $response->created_at->format('M j, Y g:i A') }}</p>
@@ -144,7 +166,7 @@
                                         <div class="mt-3 space-y-2">
                                             @foreach($response->attachments as $attachment)
                                                 <a href="{{ Storage::url($attachment) }}" target="_blank"
-                                                   class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800">
+                                                   class="inline-flex items-center text-sm text-emerald-600 hover:text-emerald-800">
                                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                                                     </svg>
@@ -178,7 +200,7 @@
                             <label for="response_text" class="block text-sm font-medium text-gray-700 mb-2">Your Message</label>
                             <textarea name="response_text" id="response_text" required rows="4"
                                       placeholder="Type your response here..."
-                                      class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                      class="w-full rounded-lg border-gray-300 focus:ring-emerald-500 focus:border-emerald-500"></textarea>
                             @error('response_text')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -188,13 +210,13 @@
                             <label for="attachments" class="block text-sm font-medium text-gray-700 mb-2">Attachments (Optional)</label>
                             <input type="file" name="attachments[]" id="attachments" multiple
                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
                             <p class="mt-1 text-xs text-gray-500">JPG, PNG, PDF, DOC up to 10MB each</p>
                         </div>
 
                         <div class="flex justify-end">
                             <button type="submit"
-                                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
+                                    class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-colors">
                                 Send Response
                             </button>
                         </div>
@@ -225,7 +247,7 @@
                             @elseif($complaint->priority === 'high')
                                 <span class="px-2 py-1 text-xs font-semibold text-orange-800 bg-orange-100 rounded">High</span>
                             @elseif($complaint->priority === 'medium')
-                                <span class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded">Medium</span>
+                                <span class="px-2 py-1 text-xs font-semibold text-amber-800 bg-amber-100 rounded">Medium</span>
                             @else
                                 <span class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 rounded">Low</span>
                             @endif
@@ -252,9 +274,9 @@
                         <dt class="text-sm text-gray-500">Your Role</dt>
                         <dd class="mt-1">
                             @if($isComplainant)
-                                <span class="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded">Complainant</span>
+                                <span class="px-2 py-1 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded">Complainant</span>
                             @else
-                                <span class="px-2 py-1 text-xs font-semibold text-orange-800 bg-orange-100 rounded">Defendant</span>
+                                <span class="px-2 py-1 text-xs font-semibold text-amber-800 bg-amber-100 rounded">Defendant</span>
                             @endif
                         </dd>
                     </div>
@@ -267,7 +289,7 @@
                     <h3 class="font-semibold text-gray-900 mb-4">Related Booking</h3>
                     <div class="space-y-2">
                         <p class="text-sm text-gray-600">Booking Number</p>
-                        <p class="font-medium text-blue-600">{{ $complaint->booking->booking_number }}</p>
+                        <p class="font-medium text-emerald-600">{{ $complaint->booking->booking_number }}</p>
 
                         @if($complaint->booking->guidePlan)
                             <p class="text-sm text-gray-600 mt-3">Tour</p>
@@ -275,7 +297,7 @@
                         @endif
 
                         <a href="{{ route('guide.bookings.show', $complaint->booking) }}"
-                           class="inline-block mt-3 text-sm text-blue-600 hover:text-blue-800">
+                           class="inline-block mt-3 text-sm text-emerald-600 hover:text-emerald-800">
                             View Booking Details →
                         </a>
                     </div>

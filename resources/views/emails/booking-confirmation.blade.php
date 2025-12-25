@@ -37,7 +37,7 @@ Thank you for booking with us! Your tour booking has been successfully created.
 
 Your booking is currently pending payment. Please complete the payment to confirm your tour.
 
-<x-mail::button :url="route('bookings.show', $booking->id)">
+<x-mail::button :url="route('tourist.bookings.show', $booking->id)">
 Complete Payment
 </x-mail::button>
 @else
@@ -49,7 +49,7 @@ Complete Payment
 **Phone:** {{ $booking->guide->phone }}
 @endif
 
-<x-mail::button :url="route('bookings.show', $booking->id)">
+<x-mail::button :url="route('tourist.bookings.show', $booking->id)">
 View Booking Details
 </x-mail::button>
 @endif
@@ -59,7 +59,6 @@ View Booking Details
 - Please arrive at the meeting location on time
 - Bring necessary travel documents and identification
 - Contact your guide if you have any questions
-- Review our cancellation policy in your booking agreement
 
 You can download your booking agreement from your booking details page.
 

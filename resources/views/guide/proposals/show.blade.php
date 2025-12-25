@@ -1,32 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proposal Details</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-50">
-    @include('layouts.navigation')
+@extends('layouts.app')
 
-    <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-6">
-            <a href="{{ route('guide.proposals.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-                Back to Proposals
-            </a>
-        </div>
+@section('content')
+<div class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-6" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{{ route('guide.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-emerald-600">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <a href="{{ route('guide.proposals.index') }}" class="ml-1 text-sm font-medium text-gray-500 hover:text-emerald-600 md:ml-2">Tour Proposals</a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-emerald-600 md:ml-2">{{ Str::limit($proposal->guidePlan->title, 25) }}</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
 
         @if(session('success'))
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
                 <div class="flex">
-                    <svg class="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    <p class="ml-3 text-sm text-green-700">{{ session('success') }}</p>
+                    <p class="ml-3 text-sm text-emerald-700">{{ session('success') }}</p>
                 </div>
             </div>
         @endif
@@ -44,8 +57,8 @@
 
         @php
             $statusColors = [
-                'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
-                'accepted' => 'bg-green-100 text-green-800 border-green-300',
+                'pending' => 'bg-amber-100 text-amber-800 border-amber-300',
+                'accepted' => 'bg-emerald-100 text-emerald-800 border-emerald-300',
                 'rejected' => 'bg-red-100 text-red-800 border-red-300',
                 'cancelled' => 'bg-gray-100 text-gray-800 border-gray-300',
             ];
@@ -67,30 +80,30 @@
                     </div>
                 </div>
             @else
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
                     <div class="flex items-start">
-                        <svg class="w-6 h-6 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <div class="ml-3">
-                            <h3 class="font-semibold text-yellow-900">Awaiting Your Response</h3>
-                            <p class="text-yellow-800 text-sm mt-1">Please review this proposal and accept or reject it.</p>
+                            <h3 class="font-semibold text-amber-900">Awaiting Your Response</h3>
+                            <p class="text-amber-800 text-sm mt-1">Please review this proposal and accept or reject it.</p>
                         </div>
                     </div>
                 </div>
             @endif
         @elseif($proposal->status === 'accepted')
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
                 <div class="flex items-start">
-                    <svg class="w-6 h-6 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-emerald-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <div class="ml-3">
-                        <h3 class="font-semibold text-green-900">Proposal Accepted</h3>
-                        <p class="text-green-800 text-sm mt-1">A booking has been created. Waiting for tourist to complete payment.</p>
+                        <h3 class="font-semibold text-emerald-900">Proposal Accepted</h3>
+                        <p class="text-emerald-800 text-sm mt-1">A booking has been created. Waiting for tourist to complete payment.</p>
                         @if($proposal->booking)
                             <a href="{{ route('guide.bookings.show', $proposal->booking->id) }}"
-                               class="inline-flex items-center mt-3 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                               class="inline-flex items-center mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition-colors">
                                 View Booking
                                 <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -104,11 +117,11 @@
 
         <div class="bg-white rounded-lg shadow-sm overflow-hidden">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+            <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white p-6">
                 <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-2xl font-bold">{{ $proposal->guidePlan->title }}</h1>
-                        <p class="text-blue-100 mt-1">Proposal from {{ $proposal->tourist->full_name }}</p>
+                        <p class="text-emerald-100 mt-1">Proposal from {{ $proposal->tourist->full_name }}</p>
                     </div>
                     <span class="px-4 py-2 rounded-full text-sm font-semibold {{ $statusColor }}">
                         {{ ucfirst($proposal->status) }}
@@ -121,7 +134,7 @@
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Tourist Information</h3>
                     <div class="flex items-start space-x-4">
-                        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        <div class="w-16 h-16 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                             {{ strtoupper(substr($proposal->tourist->full_name, 0, 1)) }}
                         </div>
                         <div class="flex-1">
@@ -134,8 +147,8 @@
 
                             @if($paymentCompleted)
                                 <!-- Show contact details after payment -->
-                                <div class="mt-3 p-3 bg-green-50 rounded-lg">
-                                    <p class="text-sm text-green-800 font-medium mb-2">Contact Details</p>
+                                <div class="mt-3 p-3 bg-emerald-50 rounded-lg">
+                                    <p class="text-sm text-emerald-800 font-medium mb-2">Contact Details</p>
                                     <p class="text-sm text-gray-700">
                                         <span class="font-medium">Email:</span> {{ $proposal->tourist->user->email }}
                                     </p>
@@ -179,7 +192,7 @@
                         </div>
                         <div>
                             <span class="text-sm text-gray-500">Proposed Price</span>
-                            <p class="font-semibold text-2xl {{ $proposal->isBelowMinimum() ? 'text-red-600' : 'text-green-600' }}">
+                            <p class="font-semibold text-2xl {{ $proposal->isBelowMinimum() ? 'text-red-600' : 'text-emerald-600' }}">
                                 ${{ number_format($proposal->proposed_price, 2) }}
                             </p>
                             @if($proposal->discount_percentage > 0)
@@ -194,7 +207,7 @@
                     @if($proposal->modifications)
                         <div class="mt-6">
                             <span class="text-sm text-gray-500 font-semibold">Requested Modifications</span>
-                            <div class="mt-2 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="mt-2 bg-cyan-50 border border-cyan-200 rounded-lg p-4">
                                 <p class="text-gray-900 whitespace-pre-wrap">{{ $proposal->modifications }}</p>
                             </div>
                         </div>
@@ -214,7 +227,7 @@
                 @if($proposal->status === 'accepted' && $proposal->booking)
                     <div class="border-t border-gray-200 pt-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Booking Created</h3>
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
                             <div class="grid grid-cols-2 gap-4 text-sm">
                                 <div>
                                     <span class="text-gray-600">Booking Number</span>
@@ -226,7 +239,7 @@
                                 </div>
                                 <div>
                                     <span class="text-gray-600">Your Payout</span>
-                                    <p class="font-semibold text-green-600">${{ number_format($proposal->booking->guide_payout, 2) }}</p>
+                                    <p class="font-semibold text-emerald-600">${{ number_format($proposal->booking->guide_payout, 2) }}</p>
                                 </div>
                                 <div>
                                     <span class="text-gray-600">Total (incl. platform fee)</span>
@@ -249,7 +262,7 @@
                                     @csrf
                                     <button type="submit"
                                             onclick="return confirm('Accept this proposal? A booking will be created for the tourist to pay.');"
-                                            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center">
+                                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
@@ -316,12 +329,12 @@
                 <!-- View Tour Link -->
                 <div class="border-t border-gray-200 pt-6">
                     <a href="{{ route('guide.plans.show', $proposal->guidePlan->id) }}"
-                       class="text-blue-600 hover:text-blue-800 font-semibold">
+                       class="text-emerald-600 hover:text-emerald-800 font-semibold">
                         View Tour Details →
                     </a>
                 </div>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+@endsection

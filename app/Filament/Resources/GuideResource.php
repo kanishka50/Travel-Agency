@@ -8,10 +8,12 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Hash;
 
 class GuideResource extends Resource
 {
@@ -64,6 +66,13 @@ class GuideResource extends Resource
                             ->required()
                             ->maxLength(255),
 
+                        Forms\Components\Select::make('guide_type')
+                            ->label('Guide Type')
+                            ->options(Guide::GUIDE_TYPES)
+                            ->required()
+                            ->native(false)
+                            ->default('not_specified'),
+
                         Forms\Components\TextInput::make('phone')
                             ->label('Phone Number')
                             ->tel()
@@ -113,7 +122,7 @@ class GuideResource extends Resource
                             ->columnSpanFull(),
                     ]),
 
-                Forms\Components\Section::make('License & Vehicle Information')
+                Forms\Components\Section::make('License & Insurance')
                     ->schema([
                         Forms\Components\TextInput::make('license_number')
                             ->label('Guide License Number')
@@ -123,15 +132,6 @@ class GuideResource extends Resource
                             ->label('License Expiry Date')
                             ->native(false)
                             ->displayFormat('Y-m-d'),
-
-                        Forms\Components\TextInput::make('vehicle_type')
-                            ->label('Vehicle Type')
-                            ->maxLength(255)
-                            ->placeholder('e.g., Van, Car, SUV'),
-
-                        Forms\Components\TextInput::make('vehicle_registration')
-                            ->label('Vehicle Registration Number')
-                            ->maxLength(255),
 
                         Forms\Components\TextInput::make('insurance_policy_number')
                             ->label('Insurance Policy Number')
@@ -143,7 +143,8 @@ class GuideResource extends Resource
                             ->displayFormat('Y-m-d'),
                     ])
                     ->columns(2)
-                    ->collapsible(),
+                    ->collapsible()
+                    ->description('Note: Vehicles are managed separately from the guide\'s dashboard.'),
 
                 Forms\Components\Section::make('Emergency Contact')
                     ->schema([
@@ -213,6 +214,20 @@ class GuideResource extends Resource
                     ->columns(3)
                     ->collapsible()
                     ->collapsed(),
+
+                Forms\Components\Section::make('Admin Notes')
+                    ->schema([
+                        Forms\Components\Textarea::make('admin_notes')
+                            ->label('Private Admin Notes')
+                            ->rows(4)
+                            ->columnSpanFull()
+                            ->maxLength(5000)
+                            ->helperText('These notes are only visible to admins. Guides and tourists cannot see them.'),
+                    ])
+                    ->icon('heroicon-o-lock-closed')
+                    ->iconColor('warning')
+                    ->description('Internal notes for admin reference only - not visible to guides or tourists')
+                    ->collapsible(),
             ]);
     }
 
@@ -239,6 +254,13 @@ class GuideResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
+
+                Tables\Columns\TextColumn::make('guide_type')
+                    ->label('Type')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => Guide::GUIDE_TYPES[$state] ?? 'Not Specified')
+                    ->color('info')
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('user.email')
                     ->label('Email')
@@ -321,6 +343,11 @@ class GuideResource extends Resource
                     ])
                     ->native(false),
 
+                Tables\Filters\SelectFilter::make('guide_type')
+                    ->label('Guide Type')
+                    ->options(Guide::GUIDE_TYPES)
+                    ->native(false),
+
                 Tables\Filters\Filter::make('high_rated')
                     ->label('High Rated (4.0+)')
                     ->query(fn (Builder $query): Builder => $query->where('average_rating', '>=', 4.0)),
@@ -361,9 +388,45 @@ class GuideResource extends Resource
                         $newStatus = $record->user->status === 'active' ? 'suspended' : 'active';
                         $record->user->update(['status' => $newStatus]);
 
-                        \Filament\Notifications\Notification::make()
+                        Notification::make()
                             ->title('Status Updated')
                             ->body("Guide account has been " . ($newStatus === 'active' ? 'activated' : 'suspended'))
+                            ->success()
+                            ->send();
+                    }),
+
+                Tables\Actions\Action::make('reset_password')
+                    ->label('Reset Password')
+                    ->icon('heroicon-o-key')
+                    ->color('danger')
+                    ->modalHeading('Reset Guide Password')
+                    ->modalDescription(fn ($record) => "Set a new password for {$record->full_name} ({$record->user->email}). You will need to communicate this password to the guide directly.")
+                    ->modalSubmitActionLabel('Update Password')
+                    ->form([
+                        Forms\Components\TextInput::make('new_password')
+                            ->label('New Password')
+                            ->password()
+                            ->required()
+                            ->minLength(8)
+                            ->maxLength(50)
+                            ->helperText('Minimum 8 characters. You must communicate this password to the guide.'),
+
+                        Forms\Components\TextInput::make('new_password_confirmation')
+                            ->label('Confirm Password')
+                            ->password()
+                            ->required()
+                            ->same('new_password')
+                            ->helperText('Re-enter the password to confirm.'),
+                    ])
+                    ->action(function ($record, array $data) {
+                        // Update user password
+                        $record->user->update([
+                            'password' => Hash::make($data['new_password']),
+                        ]);
+
+                        Notification::make()
+                            ->title('Password Updated')
+                            ->body("Password has been updated for {$record->full_name}. Please communicate the new password to the guide.")
                             ->success()
                             ->send();
                     }),
@@ -408,6 +471,13 @@ class GuideResource extends Resource
                             ->label('Full Name')
                             ->icon('heroicon-o-user')
                             ->weight('bold'),
+
+                        Infolists\Components\TextEntry::make('guide_type')
+                            ->label('Guide Type')
+                            ->badge()
+                            ->formatStateUsing(fn ($state) => Guide::GUIDE_TYPES[$state] ?? 'Not Specified')
+                            ->color('info')
+                            ->icon('heroicon-o-identification'),
 
                         Infolists\Components\TextEntry::make('phone')
                             ->label('Phone')
@@ -489,7 +559,7 @@ class GuideResource extends Resource
                     ])
                     ->columns(4),
 
-                Infolists\Components\Section::make('License & Vehicle')
+                Infolists\Components\Section::make('License & Insurance')
                     ->schema([
                         Infolists\Components\TextEntry::make('license_number')
                             ->label('Guide License Number')
@@ -503,16 +573,6 @@ class GuideResource extends Resource
                             ->icon('heroicon-o-calendar')
                             ->color(fn ($state) => $state && $state->isPast() ? 'danger' : 'success'),
 
-                        Infolists\Components\TextEntry::make('vehicle_type')
-                            ->label('Vehicle Type')
-                            ->placeholder('Not provided')
-                            ->icon('heroicon-o-truck'),
-
-                        Infolists\Components\TextEntry::make('vehicle_registration')
-                            ->label('Vehicle Registration')
-                            ->placeholder('Not provided')
-                            ->icon('heroicon-o-identification'),
-
                         Infolists\Components\TextEntry::make('insurance_policy_number')
                             ->label('Insurance Policy')
                             ->placeholder('Not provided')
@@ -524,9 +584,17 @@ class GuideResource extends Resource
                             ->placeholder('Not provided')
                             ->icon('heroicon-o-calendar')
                             ->color(fn ($state) => $state && $state->isPast() ? 'danger' : 'success'),
+
+                        Infolists\Components\TextEntry::make('vehicles_count')
+                            ->label('Registered Vehicles')
+                            ->state(fn ($record) => $record->vehicles()->count())
+                            ->icon('heroicon-o-truck')
+                            ->suffix(' vehicle(s)')
+                            ->color('info'),
                     ])
                     ->columns(2)
-                    ->collapsible(),
+                    ->collapsible()
+                    ->description('Vehicles are managed from the guide\'s dashboard or the Vehicle Management section.'),
 
                 Infolists\Components\Section::make('Emergency Contact')
                     ->schema([
@@ -580,6 +648,20 @@ class GuideResource extends Resource
                     ->columns(2)
                     ->collapsible()
                     ->collapsed(),
+
+                Infolists\Components\Section::make('Admin Notes')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('admin_notes')
+                            ->label('Private Admin Notes')
+                            ->markdown()
+                            ->columnSpanFull()
+                            ->placeholder('No admin notes recorded')
+                            ->icon('heroicon-o-lock-closed'),
+                    ])
+                    ->icon('heroicon-o-lock-closed')
+                    ->iconColor('warning')
+                    ->description('Internal notes for admin reference only - not visible to guides or tourists')
+                    ->collapsible(),
             ]);
     }
 

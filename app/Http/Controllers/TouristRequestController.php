@@ -24,7 +24,7 @@ class TouristRequestController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('tourist-requests.index', compact('requests'));
+        return view('tourist.requests.index', compact('requests'));
     }
 
     /**
@@ -32,7 +32,7 @@ class TouristRequestController extends Controller
      */
     public function create()
     {
-        return view('tourist-requests.create');
+        return view('tourist.requests.create');
     }
 
     /**
@@ -102,7 +102,7 @@ class TouristRequestController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('tourist-requests.show', $touristRequest->id)
+                ->route('tourist.requests.show', $touristRequest->id)
                 ->with('success', 'Your tour request has been posted! Guides will start submitting proposals soon.');
 
         } catch (\Exception $e) {
@@ -132,7 +132,7 @@ class TouristRequestController extends Controller
             $query->orderBy('total_price', 'asc'); // Show cheapest first
         }]);
 
-        return view('tourist-requests.show', compact('touristRequest'));
+        return view('tourist.requests.show', compact('touristRequest'));
     }
 
     /**
@@ -149,11 +149,11 @@ class TouristRequestController extends Controller
         // Only allow editing if no bids have been received
         if ($touristRequest->bid_count > 0) {
             return redirect()
-                ->route('tourist-requests.show', $touristRequest->id)
+                ->route('tourist.requests.show', $touristRequest->id)
                 ->with('error', 'Cannot edit request after receiving bids.');
         }
 
-        return view('tourist-requests.edit', compact('touristRequest'));
+        return view('tourist.requests.edit', compact('touristRequest'));
     }
 
     /**
@@ -170,7 +170,7 @@ class TouristRequestController extends Controller
         // Only allow editing if no bids have been received
         if ($touristRequest->bid_count > 0) {
             return redirect()
-                ->route('tourist-requests.show', $touristRequest->id)
+                ->route('tourist.requests.show', $touristRequest->id)
                 ->with('error', 'Cannot edit request after receiving bids.');
         }
 
@@ -185,7 +185,7 @@ class TouristRequestController extends Controller
         $touristRequest->update($validated);
 
         return redirect()
-            ->route('tourist-requests.show', $touristRequest->id)
+            ->route('tourist.requests.show', $touristRequest->id)
             ->with('success', 'Request updated successfully.');
     }
 
@@ -206,7 +206,7 @@ class TouristRequestController extends Controller
         ]);
 
         return redirect()
-            ->route('tourist-requests.show', $touristRequest->id)
+            ->route('tourist.requests.show', $touristRequest->id)
             ->with('success', 'Request closed successfully. No more bids will be accepted.');
     }
 
@@ -226,14 +226,14 @@ class TouristRequestController extends Controller
 
         if ($pendingBids > 0) {
             return redirect()
-                ->route('tourist-requests.show', $touristRequest->id)
+                ->route('tourist.requests.show', $touristRequest->id)
                 ->with('error', 'Cannot delete request with pending bids. Please reject or accept them first.');
         }
 
         $touristRequest->delete();
 
         return redirect()
-            ->route('tourist-requests.index')
+            ->route('tourist.requests.index')
             ->with('success', 'Request deleted successfully.');
     }
 }

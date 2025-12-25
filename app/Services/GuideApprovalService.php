@@ -98,6 +98,7 @@ class GuideApprovalService
                     'user_id' => $user->id,
                     'guide_id_number' => $guideId,
                     'full_name' => $request->full_name,
+                    'guide_type' => $request->guide_type ?? 'not_specified',
                     'phone' => $request->phone,
                     'national_id' => $request->national_id,
                     'bio' => $request->experience_description,
@@ -214,11 +215,12 @@ class GuideApprovalService
             ];
         }
 
-        // Check if email already exists as a user
-        if (User::where('email', $request->email)->exists()) {
+        // Check if email already exists as a guide (not just user - tourists can become guides)
+        $existingUser = User::where('email', $request->email)->first();
+        if ($existingUser && $existingUser->user_type === 'guide') {
             return [
                 'canApprove' => false,
-                'reason' => 'A user with this email already exists.',
+                'reason' => 'A guide account with this email already exists.',
             ];
         }
 

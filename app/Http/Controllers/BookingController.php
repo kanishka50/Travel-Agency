@@ -6,6 +6,7 @@ use App\Mail\BookingConfirmation;
 use App\Mail\GuideBookingNotification;
 use App\Models\Booking;
 use App\Models\GuidePlan;
+use App\Models\GuidePlanAddon;
 use App\Services\AvailabilityService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -35,7 +36,7 @@ class BookingController extends Controller
             'start_date' => 'required|date|after_or_equal:today',
         ]);
 
-        $plan = GuidePlan::with('guide.user')->findOrFail($request->plan_id);
+        $plan = GuidePlan::with(['guide.user', 'addons'])->findOrFail($request->plan_id);
         $startDate = Carbon::parse($request->start_date);
 
         // Final availability check
@@ -49,7 +50,7 @@ class BookingController extends Controller
 
         $endDate = Carbon::parse($availability['end_date']);
 
-        return view('bookings.create', compact('plan', 'startDate', 'endDate'));
+        return view('tourist.bookings.create', compact('plan', 'startDate', 'endDate'));
     }
 
     /**
@@ -139,13 +140,18 @@ class BookingController extends Controller
 
             // Save add-ons if any
             if (!empty($validated['selected_addons'])) {
-                foreach ($validated['selected_addons'] as $addon) {
+                foreach ($validated['selected_addons'] as $addonData) {
+                    // Find the original GuidePlanAddon to get full details
+                    $guidePlanAddon = GuidePlanAddon::find($addonData['addon_id']);
+
                     $booking->addons()->create([
-                        'addon_id' => $addon['addon_id'],
-                        'addon_name' => $addon['name'] ?? 'Add-on',
-                        'quantity' => $addon['quantity'],
-                        'price_per_unit' => $addon['price'],
-                        'total_price' => $addon['price'] * $addon['quantity'],
+                        'guide_plan_addon_id' => $addonData['addon_id'],
+                        'addon_name' => $guidePlanAddon ? $guidePlanAddon->addon_name : ($addonData['name'] ?? 'Add-on'),
+                        'addon_description' => $guidePlanAddon ? $guidePlanAddon->addon_description : '',
+                        'day_number' => $guidePlanAddon ? $guidePlanAddon->day_number : 0,
+                        'price_per_person' => $addonData['price'],
+                        'num_participants' => $addonData['quantity'],
+                        'total_price' => $addonData['price'] * $addonData['quantity'],
                     ]);
                 }
             }
@@ -181,7 +187,7 @@ class BookingController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('bookings.show', $booking->id)
+                ->route('tourist.bookings.show', $booking->id)
                 ->with('success', 'Booking created successfully! Please complete payment to confirm.');
 
         } catch (\Exception $e) {
@@ -206,9 +212,9 @@ class BookingController extends Controller
         }
 
         // Load relationships based on booking type
-        $booking->load(['guidePlan', 'guide.user', 'addons', 'touristRequest', 'acceptedBid']);
+        $booking->load(['guidePlan', 'guide.user', 'addons', 'touristRequest', 'acceptedBid', 'vehicleAssignment.vehicle.photos']);
 
-        return view('bookings.show', compact('booking'));
+        return view('tourist.bookings.show', compact('booking'));
     }
 
     /**
@@ -224,11 +230,11 @@ class BookingController extends Controller
         }
 
         $bookings = Booking::where('tourist_id', $tourist->id)
-            ->with(['guidePlan', 'guide.user', 'touristRequest'])
+            ->with(['guidePlan', 'guide.user', 'touristRequest', 'vehicleAssignment.vehicle'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('bookings.index', compact('bookings'));
+        return view('tourist.bookings.index', compact('bookings'));
     }
 
     /**

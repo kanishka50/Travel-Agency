@@ -14,7 +14,7 @@ Great news! You've received a new proposal for your tour request **"{{ $request-
 ### Proposal Summary
 {{ Str::limit($bid->proposal_message, 200) }}
 
-<x-mail::button :url="route('tourist-requests.show', $request->id)">
+<x-mail::button :url="route('tourist.requests.show', $request->id)">
 View Full Proposal
 </x-mail::button>
 

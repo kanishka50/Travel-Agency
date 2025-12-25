@@ -46,7 +46,7 @@ class BidController extends Controller
             ->orderBy('bid_number', 'asc')
             ->get();
 
-        return view('guide.bids.create', compact('touristRequest', 'bidNumber', 'myBids'));
+        return view('guide.proposals.create', compact('touristRequest', 'bidNumber', 'myBids'));
     }
 
     /**

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bid;
 use App\Models\Booking;
 use App\Models\PlanProposal;
+use App\Models\TouristRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,6 +54,18 @@ class GuideController extends Controller
             $q->where('guide_id', $guide->id);
         })->where('status', 'pending')->count();
 
+        // Get recent bids submitted by this guide
+        $recentBids = Bid::where('guide_id', $guide->id)
+            ->with('touristRequest')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Get count of open tour requests (that haven't expired)
+        $openTourRequests = TouristRequest::where('status', 'open')
+            ->where('expires_at', '>', Carbon::now())
+            ->count();
+
         // Get calendar events (all bookings)
         $calendarBookings = Booking::where('guide_id', $guide->id)
             ->whereIn('status', ['pending_payment', 'confirmed', 'ongoing'])
@@ -87,7 +101,9 @@ class GuideController extends Controller
             'totalEarnings',
             'thisMonthEarnings',
             'calendarBookings',
-            'pendingProposals'
+            'pendingProposals',
+            'recentBids',
+            'openTourRequests'
         ));
     }
 
@@ -96,7 +112,7 @@ class GuideController extends Controller
         $guide = Auth::user()->guide;
 
         $query = Booking::where('guide_id', $guide->id)
-            ->with(['tourist.user', 'guidePlan', 'touristRequest', 'addons']);
+            ->with(['tourist.user', 'guidePlan', 'touristRequest', 'addons', 'vehicleAssignment.vehicle']);
 
         // Filter by status
         if ($request->has('status') && $request->status !== 'all') {
@@ -133,8 +149,18 @@ class GuideController extends Controller
             abort(403, 'Unauthorized access to booking.');
         }
 
-        $booking->load(['tourist.user', 'guidePlan', 'touristRequest', 'acceptedBid', 'addons']);
+        $booking->load(['tourist.user', 'guidePlan', 'touristRequest', 'acceptedBid', 'addons', 'vehicleAssignment.vehicle.photos']);
 
         return view('guide.bookings.show', compact('booking'));
+    }
+
+    public function settings()
+    {
+        $guide = Auth::user()->guide;
+
+        return view('guide.settings', [
+            'guide' => $guide,
+            'user' => Auth::user(),
+        ]);
     }
 }

@@ -23,7 +23,7 @@ Don't be discouraged! You can:
 - Explore other similar tours from different guides
 - Book the tour at the listed price
 
-<x-mail::button :url="route('plans.show', $plan->id)">
+<x-mail::button :url="route('tour-packages.show', $plan->id)">
 View Tour & Try Again
 </x-mail::button>
 
