@@ -114,17 +114,17 @@
     <!-- Thumbnail Strip -->
     @if($totalPhotos > 1)
         <div class="bg-slate-900 py-4 px-6 lg:px-[8%]">
-            <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center">
                 @if($plan->cover_photo)
-                    <div class="flex-shrink-0 cursor-pointer" onclick="openGallery(0)">
+                    <div class="flex-shrink-0 cursor-pointer w-32 h-20 rounded-xl overflow-hidden ring-2 ring-amber-500 hover:ring-amber-400 transition-all hover:scale-105" onclick="openGallery(0)">
                         <img src="{{ Storage::url($plan->cover_photo) }}" alt="Cover"
-                             class="h-20 w-28 object-cover rounded-xl ring-2 ring-amber-500 hover:ring-amber-400 transition-all">
+                             class="w-full h-full object-cover">
                     </div>
                 @endif
                 @foreach($plan->photos as $index => $photo)
-                    <div class="flex-shrink-0 cursor-pointer" onclick="openGallery({{ $index + ($plan->cover_photo ? 1 : 0) }})">
+                    <div class="flex-shrink-0 cursor-pointer w-32 h-20 rounded-xl overflow-hidden ring-2 ring-transparent hover:ring-amber-500 transition-all hover:scale-105" onclick="openGallery({{ $index + ($plan->cover_photo ? 1 : 0) }})">
                         <img src="{{ $photo->url }}" alt="Photo {{ $index + 1 }}"
-                             class="h-20 w-28 object-cover rounded-xl ring-2 ring-transparent hover:ring-amber-500 transition-all">
+                             class="w-full h-full object-cover">
                     </div>
                 @endforeach
             </div>
@@ -858,49 +858,61 @@
 
 <!-- Lightbox Modal -->
 @if($totalPhotos > 0)
-    <div id="gallery-lightbox" class="fixed inset-0 z-50 hidden bg-black/95">
-        <div class="absolute inset-0 flex items-center justify-center">
-            <!-- Close button -->
-            <button onclick="closeGallery()" class="absolute top-6 right-6 text-white/70 hover:text-white z-20 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
+    <div id="gallery-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-sm">
+        <!-- Close button -->
+        <button onclick="closeGallery()" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/80 hover:text-white z-30 p-2.5 bg-white/10 hover:bg-white/20 rounded-full transition-all group">
+            <svg class="w-6 h-6 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
 
-            <!-- Navigation buttons -->
-            <button onclick="prevGalleryPhoto()" class="absolute left-6 text-white/70 hover:text-white z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-                </svg>
-            </button>
-            <button onclick="nextGalleryPhoto()" class="absolute right-6 text-white/70 hover:text-white z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                </svg>
-            </button>
+        <!-- Main content area with image -->
+        <div class="absolute inset-0 flex flex-col">
+            <!-- Image container - takes most of the space -->
+            <div class="flex-1 flex items-center justify-center px-4 sm:px-16 py-20 relative">
+                <!-- Navigation buttons -->
+                <button onclick="prevGalleryPhoto()" class="absolute left-2 sm:left-6 text-white/70 hover:text-white z-20 p-2.5 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all hover:scale-110">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <button onclick="nextGalleryPhoto()" class="absolute right-2 sm:right-6 text-white/70 hover:text-white z-20 p-2.5 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all hover:scale-110">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
 
-            <!-- Main image -->
-            <img id="gallery-lightbox-image" src="" alt="Gallery" class="max-h-[80vh] max-w-[85vw] object-contain rounded-lg">
+                <!-- Image wrapper - contains the actual image without cropping -->
+                <div class="w-full h-full flex items-center justify-center">
+                    <img id="gallery-lightbox-image"
+                         src=""
+                         alt="Gallery"
+                         class="max-w-full max-h-full w-auto h-auto object-contain rounded-xl shadow-2xl transition-opacity duration-300"
+                         style="max-height: calc(100vh - 180px);">
+                </div>
 
-            <!-- Counter -->
-            <div id="gallery-counter" class="absolute bottom-24 left-1/2 transform -translate-x-1/2 text-white bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium"></div>
-        </div>
+                <!-- Counter badge -->
+                <div id="gallery-counter" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black/60 backdrop-blur-md px-5 py-2 rounded-full text-sm font-semibold shadow-lg">
+                    1 / {{ $totalPhotos }}
+                </div>
+            </div>
 
-        <!-- Thumbnail strip in lightbox -->
-        <div class="absolute bottom-6 left-0 right-0 px-6">
-            <div class="flex justify-center gap-2 overflow-x-auto py-2" id="gallery-thumbnails">
-                @if($plan->cover_photo)
-                    <div class="flex-shrink-0 cursor-pointer gallery-thumb" onclick="goToGalleryPhoto(0)">
-                        <img src="{{ Storage::url($plan->cover_photo) }}" alt="Cover"
-                             class="h-14 w-20 object-cover rounded-lg opacity-50 hover:opacity-100 transition-opacity ring-2 ring-transparent">
-                    </div>
-                @endif
-                @foreach($plan->photos as $index => $photo)
-                    <div class="flex-shrink-0 cursor-pointer gallery-thumb" onclick="goToGalleryPhoto({{ $index + ($plan->cover_photo ? 1 : 0) }})">
-                        <img src="{{ $photo->url }}" alt="Photo {{ $index + 1 }}"
-                             class="h-14 w-20 object-cover rounded-lg opacity-50 hover:opacity-100 transition-opacity ring-2 ring-transparent">
-                    </div>
-                @endforeach
+            <!-- Thumbnail strip at bottom -->
+            <div class="flex-shrink-0 bg-gradient-to-t from-black/80 to-transparent py-4 px-4 sm:px-6">
+                <div class="flex justify-center gap-2 overflow-x-auto scrollbar-hide" id="gallery-thumbnails">
+                    @if($plan->cover_photo)
+                        <div class="flex-shrink-0 cursor-pointer gallery-thumb group" onclick="goToGalleryPhoto(0)">
+                            <img src="{{ Storage::url($plan->cover_photo) }}" alt="Cover"
+                                 class="h-12 w-16 sm:h-14 sm:w-20 object-cover rounded-lg opacity-50 group-hover:opacity-90 transition-all ring-2 ring-transparent hover:ring-amber-400/50 hover:scale-105">
+                        </div>
+                    @endif
+                    @foreach($plan->photos as $index => $photo)
+                        <div class="flex-shrink-0 cursor-pointer gallery-thumb group" onclick="goToGalleryPhoto({{ $index + ($plan->cover_photo ? 1 : 0) }})">
+                            <img src="{{ $photo->url }}" alt="Photo {{ $index + 1 }}"
+                                 class="h-12 w-16 sm:h-14 sm:w-20 object-cover rounded-lg opacity-50 group-hover:opacity-90 transition-all ring-2 ring-transparent hover:ring-amber-400/50 hover:scale-105">
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
