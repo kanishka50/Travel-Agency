@@ -1,227 +1,244 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
+
+@section('page-title', 'Add New Vehicle')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Breadcrumbs -->
-        <nav class="flex mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('guide.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-emerald-600">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                        </svg>
-                        <a href="{{ route('guide.vehicles.index') }}" class="ml-1 text-sm font-medium text-gray-500 hover:text-emerald-600 md:ml-2">My Vehicles</a>
-                    </div>
-                </li>
-                <li aria-current="page">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-emerald-600 md:ml-2">Add New Vehicle</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+<!-- Page Header -->
+<div class="mb-8">
+    <a href="{{ route('guide.vehicles.index') }}" class="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium mb-4 group">
+        <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back to My Vehicles
+    </a>
+    <h1 class="text-2xl font-bold text-slate-900">Add New Vehicle</h1>
+    <p class="text-slate-500 mt-1">Add a vehicle to use for your tours</p>
+</div>
 
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Add New Vehicle</h1>
-            <p class="text-gray-600 mt-2">Add a vehicle to use for your tours</p>
+<!-- Form -->
+<form action="{{ route('guide.vehicles.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+    @csrf
+
+    <!-- Vehicle Information -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-slate-900">Vehicle Information</h2>
+                <p class="text-sm text-slate-500">Basic details about your vehicle</p>
+            </div>
         </div>
 
-        <!-- Form -->
-        <form action="{{ route('guide.vehicles.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-            @csrf
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Vehicle Type -->
+            <div>
+                <label for="vehicle_type" class="block text-sm font-semibold text-slate-700 mb-2">Vehicle Type <span class="text-red-500">*</span></label>
+                <select name="vehicle_type" id="vehicle_type" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500 @error('vehicle_type') border-red-500 @enderror" required>
+                    <option value="">Select type...</option>
+                    @foreach($vehicleTypes as $value => $label)
+                        <option value="{{ $value }}" {{ old('vehicle_type') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+                @error('vehicle_type')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
-            <!-- Vehicle Information -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Vehicle Information</h2>
+            <!-- Make -->
+            <div>
+                <label for="make" class="block text-sm font-semibold text-slate-700 mb-2">Make <span class="text-red-500">*</span></label>
+                <input type="text" name="make" id="make" value="{{ old('make') }}" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500 @error('make') border-red-500 @enderror" placeholder="e.g., Toyota, Honda" required>
+                @error('make')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Vehicle Type -->
-                    <div>
-                        <label for="vehicle_type" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Type <span class="text-red-500">*</span></label>
-                        <select name="vehicle_type" id="vehicle_type" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 @error('vehicle_type') border-red-500 @enderror" required>
-                            <option value="">Select type...</option>
-                            @foreach($vehicleTypes as $value => $label)
-                                <option value="{{ $value }}" {{ old('vehicle_type') == $value ? 'selected' : '' }}>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        @error('vehicle_type')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+            <!-- Model -->
+            <div>
+                <label for="model" class="block text-sm font-semibold text-slate-700 mb-2">Model <span class="text-red-500">*</span></label>
+                <input type="text" name="model" id="model" value="{{ old('model') }}" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500 @error('model') border-red-500 @enderror" placeholder="e.g., HiAce, CR-V" required>
+                @error('model')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Year -->
+            <div>
+                <label for="year" class="block text-sm font-semibold text-slate-700 mb-2">Year</label>
+                <input type="number" name="year" id="year" value="{{ old('year') }}" min="1990" max="{{ date('Y') + 1 }}" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500 @error('year') border-red-500 @enderror" placeholder="e.g., 2020">
+                @error('year')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- License Plate -->
+            <div>
+                <label for="license_plate" class="block text-sm font-semibold text-slate-700 mb-2">License Plate <span class="text-red-500">*</span></label>
+                <input type="text" name="license_plate" id="license_plate" value="{{ old('license_plate') }}" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500 uppercase @error('license_plate') border-red-500 @enderror" placeholder="e.g., ABC-1234" required>
+                @error('license_plate')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Seating Capacity -->
+            <div>
+                <label for="seating_capacity" class="block text-sm font-semibold text-slate-700 mb-2">Seating Capacity <span class="text-red-500">*</span></label>
+                <input type="number" name="seating_capacity" id="seating_capacity" value="{{ old('seating_capacity') }}" min="1" max="50" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500 @error('seating_capacity') border-red-500 @enderror" placeholder="e.g., 7" required>
+                <p class="mt-1 text-xs text-slate-500">Number of passengers (excluding driver)</p>
+                @error('seating_capacity')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        <!-- Air Conditioning -->
+        <div class="mt-6">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="has_ac" value="1" {{ old('has_ac') ? 'checked' : '' }} class="rounded border-slate-300 text-amber-600 focus:ring-amber-500">
+                <span class="ml-2 text-sm text-slate-700">Vehicle has air conditioning</span>
+            </label>
+        </div>
+
+        <!-- Description -->
+        <div class="mt-6">
+            <label for="description" class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+            <textarea name="description" id="description" rows="3" class="w-full rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500 @error('description') border-red-500 @enderror" placeholder="Optional: Add any additional details about the vehicle...">{{ old('description') }}</textarea>
+            <p class="mt-1 text-xs text-slate-500">Max 500 characters</p>
+            @error('description')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+    </div>
+
+    <!-- Photos Section -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-slate-900">Vehicle Photos</h2>
+                <p class="text-sm text-slate-500">Upload up to 5 photos of your vehicle. First photo will be set as primary.</p>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Upload Photos</label>
+            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:border-amber-400 transition bg-slate-50" id="photos-dropzone">
+                <div class="space-y-1 text-center">
+                    <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="flex text-sm text-slate-600">
+                        <label for="photos" class="relative cursor-pointer rounded-md font-semibold text-amber-600 hover:text-amber-500">
+                            <span>Upload files</span>
+                            <input id="photos" name="photos[]" type="file" class="sr-only" accept="image/jpeg,image/png,image/jpg,image/webp" multiple>
+                        </label>
+                        <p class="pl-1">or drag and drop</p>
                     </div>
-
-                    <!-- Make -->
-                    <div>
-                        <label for="make" class="block text-sm font-medium text-gray-700 mb-1">Make <span class="text-red-500">*</span></label>
-                        <input type="text" name="make" id="make" value="{{ old('make') }}" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 @error('make') border-red-500 @enderror" placeholder="e.g., Toyota, Honda" required>
-                        @error('make')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Model -->
-                    <div>
-                        <label for="model" class="block text-sm font-medium text-gray-700 mb-1">Model <span class="text-red-500">*</span></label>
-                        <input type="text" name="model" id="model" value="{{ old('model') }}" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 @error('model') border-red-500 @enderror" placeholder="e.g., HiAce, CR-V" required>
-                        @error('model')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Year -->
-                    <div>
-                        <label for="year" class="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                        <input type="number" name="year" id="year" value="{{ old('year') }}" min="1990" max="{{ date('Y') + 1 }}" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 @error('year') border-red-500 @enderror" placeholder="e.g., 2020">
-                        @error('year')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- License Plate -->
-                    <div>
-                        <label for="license_plate" class="block text-sm font-medium text-gray-700 mb-1">License Plate <span class="text-red-500">*</span></label>
-                        <input type="text" name="license_plate" id="license_plate" value="{{ old('license_plate') }}" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 uppercase @error('license_plate') border-red-500 @enderror" placeholder="e.g., ABC-1234" required>
-                        @error('license_plate')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Seating Capacity -->
-                    <div>
-                        <label for="seating_capacity" class="block text-sm font-medium text-gray-700 mb-1">Seating Capacity <span class="text-red-500">*</span></label>
-                        <input type="number" name="seating_capacity" id="seating_capacity" value="{{ old('seating_capacity') }}" min="1" max="50" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 @error('seating_capacity') border-red-500 @enderror" placeholder="e.g., 7" required>
-                        <p class="mt-1 text-xs text-gray-500">Number of passengers (excluding driver)</p>
-                        @error('seating_capacity')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Air Conditioning -->
-                <div class="mt-6">
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="has_ac" value="1" {{ old('has_ac') ? 'checked' : '' }} class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                        <span class="ml-2 text-sm text-gray-700">Vehicle has air conditioning</span>
-                    </label>
-                </div>
-
-                <!-- Description -->
-                <div class="mt-6">
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea name="description" id="description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 @error('description') border-red-500 @enderror" placeholder="Optional: Add any additional details about the vehicle...">{{ old('description') }}</textarea>
-                    <p class="mt-1 text-xs text-gray-500">Max 500 characters</p>
-                    @error('description')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <p class="text-xs text-slate-500">PNG, JPG, WEBP up to 2MB each (max 5 photos)</p>
                 </div>
             </div>
 
-            <!-- Photos Section -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">Vehicle Photos</h2>
-                <p class="text-sm text-gray-600 mb-4">Upload up to 5 photos of your vehicle. First photo will be set as primary.</p>
+            <!-- Photo Previews -->
+            <div id="photos-preview" class="mt-4 grid grid-cols-2 md:grid-cols-5 gap-4 hidden"></div>
+
+            <!-- Primary Photo Selection -->
+            <div id="primary-photo-selection" class="mt-4 hidden">
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Select Primary Photo</label>
+                <select name="primary_photo" id="primary_photo" class="w-full md:w-64 rounded-xl border-slate-200 focus:border-amber-500 focus:ring-amber-500">
+                </select>
+            </div>
+
+            @error('photos')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+            @error('photos.*')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+    </div>
+
+    <!-- Documents Section -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-slate-900">Vehicle Documents</h2>
+                <p class="text-sm text-slate-500">Upload registration and insurance documents (optional but recommended)</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Registration Document -->
+            <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-900">Vehicle Registration</h3>
+                </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Photos</label>
-                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-emerald-400 transition" id="photos-dropzone">
-                        <div class="space-y-1 text-center">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <div class="flex text-sm text-gray-600">
-                                <label for="photos" class="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-500">
-                                    <span>Upload files</span>
-                                    <input id="photos" name="photos[]" type="file" class="sr-only" accept="image/jpeg,image/png,image/jpg,image/webp" multiple>
-                                </label>
-                                <p class="pl-1">or drag and drop</p>
-                            </div>
-                            <p class="text-xs text-gray-500">PNG, JPG, WEBP up to 2MB each (max 5 photos)</p>
-                        </div>
-                    </div>
-
-                    <!-- Photo Previews -->
-                    <div id="photos-preview" class="mt-4 grid grid-cols-2 md:grid-cols-5 gap-4 hidden"></div>
-
-                    <!-- Primary Photo Selection -->
-                    <div id="primary-photo-selection" class="mt-4 hidden">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Primary Photo</label>
-                        <select name="primary_photo" id="primary_photo" class="w-full md:w-64 rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
-                        </select>
-                    </div>
-
-                    @error('photos')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                    @error('photos.*')
+                    <label for="registration_document" class="block text-sm font-medium text-slate-700 mb-2">Upload Document</label>
+                    <input type="file" name="registration_document" id="registration_document"
+                        accept=".pdf,.jpeg,.jpg,.png"
+                        class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                    <p class="mt-1 text-xs text-slate-500">PDF, JPG, PNG up to 5MB</p>
+                    @error('registration_document')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
-            <!-- Documents Section -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">Vehicle Documents</h2>
-                <p class="text-sm text-gray-600 mb-4">Upload registration and insurance documents (optional but recommended).</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Registration Document -->
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h3 class="font-medium text-gray-900 mb-3">Vehicle Registration</h3>
-
-                        <div>
-                            <label for="registration_document" class="block text-sm font-medium text-gray-700 mb-2">Upload Document</label>
-                            <input type="file" name="registration_document" id="registration_document"
-                                accept=".pdf,.jpeg,.jpg,.png"
-                                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-                            <p class="mt-1 text-xs text-gray-500">PDF, JPG, PNG up to 5MB</p>
-                            @error('registration_document')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+            <!-- Insurance Document -->
+            <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
                     </div>
+                    <h3 class="font-semibold text-slate-900">Vehicle Insurance</h3>
+                </div>
 
-                    <!-- Insurance Document -->
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h3 class="font-medium text-gray-900 mb-3">Vehicle Insurance</h3>
-
-                        <div>
-                            <label for="insurance_document" class="block text-sm font-medium text-gray-700 mb-2">Upload Document</label>
-                            <input type="file" name="insurance_document" id="insurance_document"
-                                accept=".pdf,.jpeg,.jpg,.png"
-                                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-                            <p class="mt-1 text-xs text-gray-500">PDF, JPG, PNG up to 5MB</p>
-                            @error('insurance_document')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
+                <div>
+                    <label for="insurance_document" class="block text-sm font-medium text-slate-700 mb-2">Upload Document</label>
+                    <input type="file" name="insurance_document" id="insurance_document"
+                        accept=".pdf,.jpeg,.jpg,.png"
+                        class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                    <p class="mt-1 text-xs text-slate-500">PDF, JPG, PNG up to 5MB</p>
+                    @error('insurance_document')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
-
-            <!-- Submit Buttons -->
-            <div class="flex justify-end space-x-4">
-                <a href="{{ route('guide.vehicles.index') }}" class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
-                    Cancel
-                </a>
-                <button type="submit" class="px-6 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition">
-                    Add Vehicle
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+
+    <!-- Submit Buttons -->
+    <div class="flex justify-end gap-4">
+        <a href="{{ route('guide.vehicles.index') }}" class="px-6 py-2.5 border border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">
+            Cancel
+        </a>
+        <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transition-all">
+            Add Vehicle
+        </button>
+    </div>
+</form>
 
 @push('scripts')
 <script>
@@ -267,15 +284,15 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 previewDiv.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview ${index + 1}" class="w-full h-24 object-cover rounded-lg border-2 ${index === 0 ? 'border-emerald-500' : 'border-gray-200'}">
-                    <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition rounded-lg flex items-center justify-center">
+                    <img src="${e.target.result}" alt="Preview ${index + 1}" class="w-full h-24 object-cover rounded-xl border-2 ${index === 0 ? 'border-amber-500' : 'border-slate-200'}">
+                    <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition rounded-xl flex items-center justify-center">
                         <button type="button" onclick="removePhoto(${index})" class="text-white text-sm">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
                         </button>
                     </div>
-                    ${index === 0 ? '<span class="absolute top-1 left-1 bg-emerald-500 text-white text-xs px-2 py-0.5 rounded">Primary</span>' : ''}
+                    ${index === 0 ? '<span class="absolute top-1 left-1 bg-amber-500 text-white text-xs px-2 py-0.5 rounded-lg">Primary</span>' : ''}
                 `;
             };
             reader.readAsDataURL(file);
@@ -307,11 +324,11 @@
         const previews = photosPreview.querySelectorAll('img');
         previews.forEach((img, index) => {
             if (index === selectedIndex) {
-                img.classList.remove('border-gray-200');
-                img.classList.add('border-emerald-500');
+                img.classList.remove('border-slate-200');
+                img.classList.add('border-amber-500');
             } else {
-                img.classList.remove('border-emerald-500');
-                img.classList.add('border-gray-200');
+                img.classList.remove('border-amber-500');
+                img.classList.add('border-slate-200');
             }
         });
 
@@ -322,7 +339,7 @@
         const selectedPreview = photosPreview.children[selectedIndex];
         if (selectedPreview) {
             const badge = document.createElement('span');
-            badge.className = 'absolute top-1 left-1 bg-emerald-500 text-white text-xs px-2 py-0.5 rounded';
+            badge.className = 'absolute top-1 left-1 bg-amber-500 text-white text-xs px-2 py-0.5 rounded-lg';
             badge.textContent = 'Primary';
             selectedPreview.appendChild(badge);
         }
